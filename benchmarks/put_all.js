@@ -6,6 +6,7 @@ var Benchmark = require('benchmark');
 var ht = require('hashtrie');
 var hamt = require('hamt');
 var p = require('persistent-hash-trie');
+var mori = require('mori');
 
 var words = require('./words').words;
 
@@ -15,7 +16,7 @@ var hashtriePutAll = function(keys) {
         var h = ht.empty;
         for (var i = 0, len = keys.length; i < len; ++i)
             h = ht.set(keys[i], i, h);
-    }
+    };
 };
 
 var hamtPutAll = function(keys) {
@@ -23,7 +24,7 @@ var hamtPutAll = function(keys) {
         var h = hamt.empty;
         for (var i = 0, len = keys.length; i < len; ++i)
             h = hamt.set(keys[i], i, h);
-    }
+    };
 };
 
 var pHashtriePutAll = function(keys) {
@@ -31,7 +32,15 @@ var pHashtriePutAll = function(keys) {
         var h = p.Trie();
         for (var i = 0, len = keys.length; i < len; ++i)
             h = p.assoc(h, keys[i], i);
-    }
+    };
+};
+
+var moriPutAll = function(keys) {
+    return function() {
+        var h = mori.hash_map();
+        for (var i = 0, len = keys.length; i < len; ++i)
+            h = mori.assoc(h, keys[i], i);
+    };
 };
 
 
@@ -46,7 +55,10 @@ module.exports = function(sizes) {
                 hamtPutAll(keys))
             
             .add('persistent-hash-trie(' + size+ ')',
-                pHashtriePutAll(keys));
+                pHashtriePutAll(keys))
+            
+            .add('mori hash_map(' + size+ ')',
+                moriPutAll(keys));
             
     }, new Benchmark.Suite('Put All'));
 };

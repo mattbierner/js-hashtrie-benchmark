@@ -4,6 +4,7 @@ Benchmarks 3 Persistent Javascript hashtrie implementations:
 * [hashtrie][hashtrie] - 0.1.x
 * [hamt][hamt] -  0.0.x
 * [persistent-hash-trie][persistent] - 0.4.x
+* [mori][mori] - 0.2.5
 
 ### Usage
 
@@ -29,11 +30,15 @@ HAMT is the fastest overall for gets, but slightly slower for puts and removes.
 
 persistent-hash-trie has some interesting features, like custom key compares and
 breaking walks, but is slower for puts, gets and single removes, being 5-10x
-slower on larger tries of 10000 or 100000.
+slower on larger tries of 10000 or 100000. Tests show persistent-hash-trie is
+10x faster for removing all entries from a trie of size 10000. Since this is
+the opposite of puts and single removes, I believe this is related to
+a [bug in the library](https://github.com/hughfdjackson/persistent-hash-trie/issues/24).
 
-It is 10x faster for removing all entries from a trie of size 10000. Since this
-is the opposite of puts and single removes, this suggests persistent-hash-trie is
-collapsing better as it removes.
+Mori's hash_map might not be the a fair comparison considering all the other
+functionality the library has, but is is really slow on almost every count.
+
+
 
 
 ```
@@ -123,4 +128,5 @@ persistent-hash-trie(10000)   :          235.92 +/- 2.19% op/s
 
 [hashtrie]: https://github.com/mattbierner/hashtrie
 [hamt]: https://github.com/mattbierner/hamt
+[hamt]: https://github.com/swannodette/mori
 [persistent]: https://github.com/hughfdjackson/persistent-hash-trie

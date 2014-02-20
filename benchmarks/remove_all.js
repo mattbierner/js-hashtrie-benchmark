@@ -6,6 +6,7 @@ var Benchmark = require('benchmark');
 var ht = require('hashtrie');
 var hamt = require('hamt');
 var p = require('persistent-hash-trie');
+var mori = require('mori');
 
 var words = require('./words').words;
 
@@ -57,6 +58,19 @@ var pHashtrieRemoveAll = function(keys, order) {
     }
 };
 
+var moriRemoveAll = function(keys, order) {
+    var h = mori.hash_map();
+    for (var i = 0, len = keys.length; i < len; ++i)
+        h = mori.assoc(h, keys[i], i);
+    
+    return function() {
+        var c = h;
+        for (var i = 0, len = order.length; i < len; ++i)
+           c = mori.dissoc(c, keys[order[i]]);
+    }
+};
+
+
 
 module.exports = function(sizes) {
     return sizes.reduce(function(b,size) {
@@ -70,7 +84,10 @@ module.exports = function(sizes) {
                 hamtRemoveAll(keys, order))
             
             .add('persistent-hash-trie(' + size+ ')',
-                pHashtrieRemoveAll(keys, order));
+                pHashtrieRemoveAll(keys, order))
+                
+            .add('mori hash_map(' + size+ ')',
+                moriRemoveAll(keys, order));
             
     }, new Benchmark.Suite('Remove All'));
 };
