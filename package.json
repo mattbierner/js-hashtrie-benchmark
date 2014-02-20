@@ -1,0 +1,32 @@
+{
+    "name": "hashtrie-benchmarks",
+    "version": "0.0.0",
+    "description": "Hash Trie Benchmarks",
+    "keywords": [
+        "trie",
+        "hashtrie",
+        "map",
+        "persistent",
+        "data structure",
+        "hash"
+    ],
+    "author": "Matt Bierner",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mattbierner/js-hashtrie-benchmark.git"
+    },
+    
+      "dependencies": {
+        "benchmark": "1.0.x",
+        "pad": "0.0.x",
+        
+        "persistent-hash-trie": "0.4.x",
+        "hashtrie": "0.1.x",
+        "hamt": "0.0.x"
+    },
+    
+    "scripts": {
+        "benchmark": "node run.js"
+    }
+}
