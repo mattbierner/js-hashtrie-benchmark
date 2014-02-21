@@ -13,8 +13,7 @@ var log = function() {
 };
 
 
-
-require('./benchmarks/get')([10, 100, 1000, 100000])
+require('./benchmarks/get')([10, 100, 1000, 10000, 100000])
     .on('complete', log)
     .run(true);
 
@@ -31,5 +30,17 @@ require('./benchmarks/remove')([10, 100, 1000, 10000, 100000])
     .run(true);
 
 require('./benchmarks/remove_all')([10, 100, 1000, 10000])
+    .on('complete', log)
+    .run(true);
+
+require('./benchmarks/count')([10, 100, 1000, 10000])
+    .on('complete', log)
+    .run(true);
+
+require('./benchmarks/sum')([10, 100, 1000, 10000])
+    .on('complete', log)
+    .run(true);
+
+require('./benchmarks/keys')([10, 100, 1000, 10000])
     .on('complete', log)
     .run(true);

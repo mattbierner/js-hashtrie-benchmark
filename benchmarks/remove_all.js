@@ -55,7 +55,7 @@ var pHashtrieRemoveAll = function(keys, order) {
         var c = h;
         for (var i = 0, len = order.length; i < len; ++i)
            c = p.dissoc(c, keys[order[i]]);
-    }
+    };
 };
 
 var moriRemoveAll = function(keys, order) {
@@ -67,7 +67,7 @@ var moriRemoveAll = function(keys, order) {
         var c = h;
         for (var i = 0, len = order.length; i < len; ++i)
            c = mori.dissoc(c, keys[order[i]]);
-    }
+    };
 };
 
 
