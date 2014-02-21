@@ -1,8 +1,8 @@
 Javascript Hash Trie Benchmarking
 
 Benchmarks 4 Persistent Javascript hashtrie implementations:
-* [hashtrie][hashtrie] - 0.1.x
-* [hamt][hamt] -  0.0.x
+* [hashtrie][hashtrie] - 0.2.x
+* [hamt][hamt] -  0.1.x
 * [persistent-hash-trie][persistent] - 0.4.x
 * [mori][mori] - 0.2.x
 
