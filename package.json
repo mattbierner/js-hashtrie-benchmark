@@ -22,7 +22,7 @@
         "pad": "0.0.x",
         
         "persistent-hash-trie": "0.4.x",
-        "hashtrie": "0.1.x",
+        "hashtrie": "0.2.x",
         "hamt": "0.0.x",
         "mori": "0.2.x"
     },
