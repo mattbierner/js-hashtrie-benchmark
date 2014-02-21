@@ -23,7 +23,7 @@ $ npm run benchmark
 * Remove N entries from the trie.
 
 ### Results
-[results](https://github.com/mattbierner/js-hashtrie-benchmark/wiki)
+[results](https://github.com/mattbierner/js-hashtrie-benchmark/wiki/results)
 
 hashtrie is fastest overall, with good get, update, and set performance. HAMT is
 the fastest for gets, but slower than hashmap for puts and removes (HAMT has not
