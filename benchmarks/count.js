@@ -7,6 +7,7 @@ var ht = require('hashtrie');
 var hamt = require('hamt');
 var p = require('persistent-hash-trie');
 var mori = require('mori');
+var immutable = require('immutable');
 
 var words = require('./words').words;
 
@@ -53,6 +54,15 @@ var moriCount = function(keys) {
     };
 };
 
+var immutableCount = function(keys) {
+    var h = immutable.Map();
+    for (var i = keys.length - 1; i >= 0; --i)
+        h = h.set(keys[i], i);
+    
+    return function() {
+        h.length;
+    };
+};
 
 
 module.exports = function(sizes) {
@@ -69,7 +79,10 @@ module.exports = function(sizes) {
                 pHashtrieCount(keys))
         
             .add('mori hash_map(' + size+ ')',
-                moriCount(keys));
+                moriCount(keys))
+        
+            .add('immutable(' + size+ ')',
+                immutableCount(keys));
             
     }, new Benchmark.Suite('Count'));
 };

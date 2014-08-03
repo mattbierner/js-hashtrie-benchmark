@@ -1,6 +1,6 @@
 Javascript Hash Trie Benchmarking
 
-Benchmarks 4 Persistent Javascript hashtrie implementations:
+Benchmarks 5 Persistent Javascript hashtrie implementations:
 * [hashtrie][hashtrie] - 0.2.x
 * [hamt][hamt] -  0.1.x
 * [persistent-hash-trie][persistent] - 0.4.x
@@ -45,28 +45,35 @@ Mori is more difficult to accurately benchmark since it is written in ClojureScr
 These benchmarks only look at the performance of Mori when called from regular Javascript.
 Actual performance may be better when called from compiled ClojureScript
 
-Mori's `hash_map` is slow for gets, especially as the size of the map increases.
-It is good for updates, but 2-3x slower than hashtrie on large maps. Mori is really
-good at aggregate operations, like count and kv reduces. `count` is a constant time
-operation. It uses an even more optimized storage scheme than HAMT and is also fast
+Mori's `hash_map` is rather slow for gets, but generally good for updates. However,
+it is often 2-3x slower than Hamt on large maps.
+
+Mori is really good at aggregate operations, like count and kv reduces. `count` is a constant time
+operation. Mori/Clojure uses an even more optimized storage scheme than HAMT and is also fast
 to fold large maps. The API is also richer, and the library may be a good choice
 if you can sacrifice some performance.
+
 
 #### persistent-hash-trie
 persistent-hash-trie has some interesting features, like custom key types and
 breaking walks, but is far too slow.
 
-Tests show persistent-hash-trie is
-the fastest for removing all entries from a trie of size 10000. Since this is
+Tests show persistent-hash-trie is the fastest for removing all entries from a
+trie of size 10000. Since this is
 the opposite of puts and single removes, I believe this is related to
 a [bug in the library](https://github.com/hughfdjackson/persistent-hash-trie/issues/24).
 
 #### Immutable
-Immutable generally performs similar to Mori, but it is written in JS. Like Mori, 
-this is a general purpose collection library. The API is richer and will be familiar to 
-OO programmers.
+Immutable generally performs similar to Mori on basic operations, but much worse
+on aggregate operations like `sum` or `keys`. `count` is also a constant time
+key lookup.
 
-Performance is mixed.
+It is written in JS. Like Mori, this is a general purpose collection library.
+The API is richer and will be familiar to  OO programmers, but I disagree with
+many of the design decisions. Batching may drastically improve performance, but
+these benchmarks do not consider batch operations.
+
+Overall, Mori is clearly the better choice if you need a general purpose collection library.
 
 
 ```
@@ -76,168 +83,209 @@ mori - 0.2.6
 persistent-hash-trie - 0.4.2
 immutable: 2.0.3
 
+bash-3.2$ npm run benchmark
+
+> hashtrie-benchmarks@0.0.0 benchmark /Users/mattbierner/Projects/js/js-hashtrie-benchmark
+> node run.js
+
 Get nth
-hashtrie(10)                  :      7655318.35 +/- 0.32% op/s
-hamt(10)                      :      7385396.99 +/- 0.70% op/s
-persistent-hash-trie(10)      :      3924971.93 +/- 1.28% op/s
-mori hash_map(10)             :      1740279.46 +/- 0.87% op/s
-hashtrie(100)                 :      6296236.55 +/- 1.19% op/s
-hamt(100)                     :      6101354.51 +/- 0.72% op/s
-persistent-hash-trie(100)     :      1997360.02 +/- 0.27% op/s
-mori hash_map(100)            :      1622838.41 +/- 1.44% op/s
-hashtrie(1000)                :      5390018.02 +/- 0.35% op/s
-hamt(1000)                    :      5102025.67 +/- 0.15% op/s
-persistent-hash-trie(1000)    :      1181361.35 +/- 1.92% op/s
-mori hash_map(1000)           :       575158.29 +/- 0.69% op/s
-hashtrie(10000)               :      4436954.32 +/- 0.30% op/s
-hamt(10000)                   :      4509190.23 +/- 0.16% op/s
-persistent-hash-trie(10000)   :       922083.26 +/- 3.67% op/s
-mori hash_map(10000)          :       489989.77 +/- 0.40% op/s
-hashtrie(100000)              :      1297258.01 +/- 1.35% op/s
-hamt(100000)                  :      1382320.11 +/- 0.34% op/s
-persistent-hash-trie(100000)  :       721107.48 +/- 2.11% op/s
-mori hash_map(100000)         :       347053.46 +/- 1.76% op/s
+hashtrie(10)                  :      7881929.26 +/- 0.18% op/s
+hamt(10)                      :      7237366.60 +/- 0.32% op/s
+persistent-hash-trie(10)      :      3766431.86 +/- 2.59% op/s
+mori hash_map(10)             :      1483920.50 +/- 0.65% op/s
+immutable(10)                 :      3005374.02 +/- 0.43% op/s
+hashtrie(100)                 :      6222234.83 +/- 2.82% op/s
+hamt(100)                     :      5969867.57 +/- 1.64% op/s
+persistent-hash-trie(100)     :      1970020.02 +/- 2.17% op/s
+mori hash_map(100)            :      1266829.15 +/- 1.64% op/s
+immutable(100)                :      2255267.52 +/- 0.52% op/s
+hashtrie(1000)                :      5444077.21 +/- 0.46% op/s
+hamt(1000)                    :      5313148.53 +/- 1.85% op/s
+persistent-hash-trie(1000)    :      1206103.85 +/- 0.64% op/s
+mori hash_map(1000)           :       655190.11 +/- 2.56% op/s
+immutable(1000)               :       772982.94 +/- 2.40% op/s
+hashtrie(10000)               :      4443745.21 +/- 0.51% op/s
+hamt(10000)                   :      4693566.35 +/- 0.40% op/s
+persistent-hash-trie(10000)   :       920975.08 +/- 1.66% op/s
+mori hash_map(10000)          :       560042.71 +/- 0.68% op/s
+immutable(10000)              :       583629.11 +/- 2.47% op/s
+hashtrie(100000)              :      1383708.01 +/- 0.77% op/s
+hamt(100000)                  :      1460863.55 +/- 0.67% op/s
+persistent-hash-trie(100000)  :       693671.86 +/- 3.81% op/s
+mori hash_map(100000)         :       363093.26 +/- 4.69% op/s
+immutable(100000)             :       343486.60 +/- 2.38% op/s
 
 
 put nth
-hashtrie(10)                  :      1366002.90 +/- 3.04% op/s
-hamt(10)                      :      1861375.24 +/- 2.05% op/s
-persistent-hash-trie(10)      :       301999.19 +/- 0.21% op/s
-mori hash_map(10)             :      1107401.03 +/- 0.76% op/s
-hashtrie(100)                 :      1174232.09 +/- 0.27% op/s
-hamt(100)                     :      2191587.20 +/- 6.46% op/s
-persistent-hash-trie(100)     :       103261.45 +/- 0.24% op/s
-mori hash_map(100)            :       930481.95 +/- 0.43% op/s
-hashtrie(1000)                :       971850.21 +/- 0.63% op/s
-hamt(1000)                    :       944549.05 +/- 1.07% op/s
-persistent-hash-trie(1000)    :        48116.38 +/- 0.20% op/s
-mori hash_map(1000)           :       727868.28 +/- 0.65% op/s
-hashtrie(10000)               :       802136.14 +/- 0.36% op/s
-hamt(10000)                   :       916281.63 +/- 0.37% op/s
-persistent-hash-trie(10000)   :        51391.57 +/- 0.25% op/s
-mori hash_map(10000)          :       656907.15 +/- 0.33% op/s
-hashtrie(100000)              :       698170.47 +/- 0.30% op/s
-hamt(100000)                  :       760224.46 +/- 2.51% op/s
-persistent-hash-trie(100000)  :        19966.70 +/- 0.22% op/s
-mori hash_map(100000)         :       574875.36 +/- 0.20% op/s
+hashtrie(10)                  :      1109032.27 +/- 10.48% op/s
+hamt(10)                      :      1428560.09 +/- 0.87% op/s
+persistent-hash-trie(10)      :       289025.44 +/- 1.59% op/s
+mori hash_map(10)             :       343552.46 +/- 2.85% op/s
+immutable(10)                 :       379771.52 +/- 1.65% op/s
+hashtrie(100)                 :      1118338.02 +/- 0.27% op/s
+hamt(100)                     :      1414805.43 +/- 0.16% op/s
+persistent-hash-trie(100)     :        83093.77 +/- 1.56% op/s
+mori hash_map(100)            :       796620.90 +/- 0.40% op/s
+immutable(100)                :       567093.21 +/- 0.66% op/s
+hashtrie(1000)                :      1230866.62 +/- 0.62% op/s
+hamt(1000)                    :      1022396.04 +/- 0.70% op/s
+persistent-hash-trie(1000)    :        47477.37 +/- 0.55% op/s
+mori hash_map(1000)           :       721541.65 +/- 1.24% op/s
+immutable(1000)               :       371195.99 +/- 17.21% op/s
+hashtrie(10000)               :      1171517.99 +/- 0.64% op/s
+hamt(10000)                   :       968174.21 +/- 0.73% op/s
+persistent-hash-trie(10000)   :        44904.49 +/- 1.43% op/s
+mori hash_map(10000)          :       574405.21 +/- 1.96% op/s
+immutable(10000)              :       440489.22 +/- 1.69% op/s
+hashtrie(100000)              :       927679.00 +/- 1.13% op/s
+hamt(100000)                  :       786777.01 +/- 0.75% op/s
+persistent-hash-trie(100000)  :        18629.34 +/- 0.97% op/s
+mori hash_map(100000)         :       496650.93 +/- 2.68% op/s
+immutable(100000)             :       248543.28 +/- 1.78% op/s
 
 
 Put All
-hashtrie(10)                  :       202639.23 +/- 9.67% op/s
-hamt(10)                      :       211147.63 +/- 0.24% op/s
-persistent-hash-trie(10)      :        33671.69 +/- 0.58% op/s
-mori hash_map(10)             :       111207.69 +/- 0.35% op/s
-hashtrie(100)                 :        13410.26 +/- 4.76% op/s
-hamt(100)                     :        16632.75 +/- 0.13% op/s
-persistent-hash-trie(100)     :         1062.63 +/- 0.24% op/s
-mori hash_map(100)            :         7873.14 +/- 0.11% op/s
-hashtrie(1000)                :         1166.68 +/- 0.32% op/s
-hamt(1000)                    :         1222.65 +/- 0.24% op/s
-persistent-hash-trie(1000)    :           62.31 +/- 0.16% op/s
-mori hash_map(1000)           :          266.32 +/- 0.51% op/s
-hashtrie(10000)               :           84.22 +/- 0.85% op/s
-hamt(10000)                   :           93.07 +/- 0.54% op/s
-persistent-hash-trie(10000)   :            4.50 +/- 10.42% op/s
-mori hash_map(10000)          :           29.98 +/- 0.51% op/s
+hashtrie(10)                  :       189160.66 +/- 2.85% op/s
+hamt(10)                      :       198786.40 +/- 6.26% op/s
+persistent-hash-trie(10)      :        39479.55 +/- 0.89% op/s
+mori hash_map(10)             :        74293.29 +/- 0.20% op/s
+immutable(10)                 :        62014.85 +/- 0.35% op/s
+hashtrie(100)                 :        14920.49 +/- 0.47% op/s
+hamt(100)                     :        17116.96 +/- 0.21% op/s
+persistent-hash-trie(100)     :         1089.53 +/- 0.16% op/s
+mori hash_map(100)            :         6705.38 +/- 0.20% op/s
+immutable(100)                :         4402.20 +/- 0.10% op/s
+hashtrie(1000)                :         1164.03 +/- 0.59% op/s
+hamt(1000)                    :         1228.95 +/- 2.38% op/s
+persistent-hash-trie(1000)    :           62.14 +/- 0.61% op/s
+mori hash_map(1000)           :          311.84 +/- 0.38% op/s
+immutable(1000)               :          253.14 +/- 0.26% op/s
+hashtrie(10000)               :           84.67 +/- 5.63% op/s
+hamt(10000)                   :          100.36 +/- 0.60% op/s
+persistent-hash-trie(10000)   :            4.81 +/- 0.30% op/s
+mori hash_map(10000)          :           34.46 +/- 1.10% op/s
+immutable(10000)              :           23.19 +/- 0.90% op/s
 
 
 remove nth
-hashtrie(10)                  :      1954123.23 +/- 7.38% op/s
-hamt(10)                      :      2348587.68 +/- 0.52% op/s
-persistent-hash-trie(10)      :       157599.67 +/- 1.11% op/s
-mori hash_map(10)             :      1006104.78 +/- 0.61% op/s
-hashtrie(100)                 :      1380806.83 +/- 0.67% op/s
-hamt(100)                     :      1500149.53 +/- 1.24% op/s
-persistent-hash-trie(100)     :        46781.12 +/- 0.57% op/s
-mori hash_map(100)            :       925258.26 +/- 0.67% op/s
-hashtrie(1000)                :       982070.44 +/- 1.91% op/s
-hamt(1000)                    :      1285937.26 +/- 2.85% op/s
-persistent-hash-trie(1000)    :        33575.03 +/- 0.26% op/s
-mori hash_map(1000)           :       352109.65 +/- 5.41% op/s
-hashtrie(10000)               :       834472.71 +/- 0.31% op/s
-hamt(10000)                   :       961339.08 +/- 1.69% op/s
-persistent-hash-trie(10000)   :        26911.99 +/- 0.16% op/s
-mori hash_map(10000)          :       305807.50 +/- 0.30% op/s
-hashtrie(100000)              :       501344.25 +/- 0.17% op/s
-hamt(100000)                  :       542741.91 +/- 1.65% op/s
-persistent-hash-trie(100000)  :        12024.87 +/- 5.47% op/s
-mori hash_map(100000)         :       208097.47 +/- 7.28% op/s
+hashtrie(10)                  :      1787413.03 +/- 0.52% op/s
+hamt(10)                      :      2316934.63 +/- 6.82% op/s
+persistent-hash-trie(10)      :       137502.48 +/- 0.13% op/s
+mori hash_map(10)             :       996949.50 +/- 0.13% op/s
+immutable(10)                 :       520005.57 +/- 0.39% op/s
+hashtrie(100)                 :      1465695.42 +/- 0.28% op/s
+hamt(100)                     :      1594335.68 +/- 0.18% op/s
+persistent-hash-trie(100)     :        48902.08 +/- 0.18% op/s
+mori hash_map(100)            :       823931.99 +/- 1.10% op/s
+immutable(100)                :       425576.96 +/- 0.30% op/s
+hashtrie(1000)                :      1099042.62 +/- 0.42% op/s
+hamt(1000)                    :      1080153.26 +/- 28.00% op/s
+persistent-hash-trie(1000)    :        33816.95 +/- 0.90% op/s
+mori hash_map(1000)           :       436831.50 +/- 0.52% op/s
+immutable(1000)               :       229412.94 +/- 8.10% op/s
+hashtrie(10000)               :       873379.59 +/- 0.49% op/s
+hamt(10000)                   :       981949.41 +/- 0.34% op/s
+persistent-hash-trie(10000)   :        27320.94 +/- 0.19% op/s
+mori hash_map(10000)          :       346443.41 +/- 0.26% op/s
+immutable(10000)              :       204317.22 +/- 0.30% op/s
+hashtrie(100000)              :       507528.91 +/- 0.17% op/s
+hamt(100000)                  :       569443.51 +/- 0.96% op/s
+persistent-hash-trie(100000)  :        11435.52 +/- 8.45% op/s
+mori hash_map(100000)         :       214654.95 +/- 0.67% op/s
+immutable(100000)             :       128347.93 +/- 7.25% op/s
 
 
 Remove All
-hashtrie(10)                  :       229838.60 +/- 0.22% op/s
-hamt(10)                      :       273951.49 +/- 0.44% op/s
-persistent-hash-trie(10)      :        22613.22 +/- 1.89% op/s
-mori hash_map(10)             :       111008.61 +/- 1.28% op/s
-hashtrie(100)                 :        15437.93 +/- 0.41% op/s
-hamt(100)                     :        19489.42 +/- 0.68% op/s
-persistent-hash-trie(100)     :         1794.18 +/- 10.88% op/s
-mori hash_map(100)            :         7874.22 +/- 8.52% op/s
-hashtrie(1000)                :         1156.22 +/- 0.47% op/s
-hamt(1000)                    :         1432.93 +/- 0.34% op/s
-persistent-hash-trie(1000)    :          935.52 +/- 0.30% op/s
-mori hash_map(1000)           :          361.35 +/- 0.83% op/s
-hashtrie(10000)               :           81.39 +/- 4.60% op/s
-hamt(10000)                   :          108.50 +/- 0.47% op/s
-persistent-hash-trie(10000)   :          247.20 +/- 0.18% op/s
-mori hash_map(10000)          :           33.69 +/- 1.14% op/s
+hashtrie(10)                  :       232129.11 +/- 0.19% op/s
+hamt(10)                      :       273471.52 +/- 0.15% op/s
+persistent-hash-trie(10)      :        21538.27 +/- 0.70% op/s
+mori hash_map(10)             :        98171.23 +/- 1.88% op/s
+immutable(10)                 :        71094.45 +/- 0.27% op/s
+hashtrie(100)                 :        15700.58 +/- 0.71% op/s
+hamt(100)                     :        20367.75 +/- 0.16% op/s
+persistent-hash-trie(100)     :         1843.25 +/- 0.21% op/s
+mori hash_map(100)            :         7603.87 +/- 11.25% op/s
+immutable(100)                :         4995.15 +/- 0.43% op/s
+hashtrie(1000)                :         1175.80 +/- 0.15% op/s
+hamt(1000)                    :         1451.93 +/- 0.17% op/s
+persistent-hash-trie(1000)    :          907.75 +/- 2.89% op/s
+mori hash_map(1000)           :          416.92 +/- 0.89% op/s
+immutable(1000)               :          276.86 +/- 0.67% op/s
+hashtrie(10000)               :           81.47 +/- 0.41% op/s
+hamt(10000)                   :           99.81 +/- 0.27% op/s
+persistent-hash-trie(10000)   :          247.75 +/- 0.18% op/s
+mori hash_map(10000)          :           38.13 +/- 1.82% op/s
+immutable(10000)              :           19.93 +/- 6.65% op/s
 
 
 Count
-hashtrie(10)                  :      1011813.17 +/- 0.26% op/s
-hamt(10)                      :      6001484.89 +/- 0.32% op/s
-persistent-hash-trie(10)      :       134706.13 +/- 0.83% op/s
-mori hash_map(10)             :     28735743.21 +/- 1.92% op/s
-hashtrie(100)                 :        47158.79 +/- 0.38% op/s
-hamt(100)                     :       424220.28 +/- 0.26% op/s
-persistent-hash-trie(100)     :         6126.75 +/- 1.87% op/s
-mori hash_map(100)            :     32093232.41 +/- 1.08% op/s
-hashtrie(1000)                :         3608.77 +/- 0.14% op/s
-hamt(1000)                    :        17202.89 +/- 0.09% op/s
-persistent-hash-trie(1000)    :          631.65 +/- 0.32% op/s
-mori hash_map(1000)           :     32038589.61 +/- 0.35% op/s
-hashtrie(10000)               :          346.32 +/- 0.06% op/s
-hamt(10000)                   :         2855.98 +/- 8.87% op/s
-persistent-hash-trie(10000)   :          139.79 +/- 1.53% op/s
-mori hash_map(10000)          :     30772513.13 +/- 0.52% op/s
+hashtrie(10)                  :       542367.27 +/- 0.52% op/s
+hamt(10)                      :      5579645.63 +/- 0.39% op/s
+persistent-hash-trie(10)      :       176920.73 +/- 0.66% op/s
+mori hash_map(10)             :     31147291.73 +/- 1.08% op/s
+immutable(10)                 :     50845683.48 +/- 2.08% op/s
+hashtrie(100)                 :        40711.83 +/- 0.10% op/s
+hamt(100)                     :       390022.77 +/- 0.08% op/s
+persistent-hash-trie(100)     :         6671.64 +/- 0.35% op/s
+mori hash_map(100)            :     28938836.03 +/- 0.43% op/s
+immutable(100)                :     52081006.39 +/- 1.84% op/s
+hashtrie(1000)                :         3487.78 +/- 1.62% op/s
+hamt(1000)                    :        18276.24 +/- 1.54% op/s
+persistent-hash-trie(1000)    :          656.40 +/- 2.02% op/s
+mori hash_map(1000)           :     31059561.12 +/- 0.18% op/s
+immutable(1000)               :     50996206.28 +/- 0.19% op/s
+hashtrie(10000)               :          352.05 +/- 0.03% op/s
+hamt(10000)                   :         4406.05 +/- 0.17% op/s
+persistent-hash-trie(10000)   :          149.28 +/- 0.46% op/s
+mori hash_map(10000)          :     30281646.10 +/- 0.30% op/s
+immutable(10000)              :     50678419.14 +/- 1.68% op/s
 
 
 Sum
-hashtrie(10)                  :       339781.75 +/- 0.63% op/s
-hamt(10)                      :      3542809.02 +/- 0.19% op/s
-persistent-hash-trie(10)      :       168350.10 +/- 1.83% op/s
-mori hash_map(10)             :      1454060.33 +/- 0.18% op/s
-hashtrie(100)                 :        42029.97 +/- 0.11% op/s
-hamt(100)                     :       319396.67 +/- 1.53% op/s
-persistent-hash-trie(100)     :         6081.52 +/- 0.50% op/s
-mori hash_map(100)            :       144492.22 +/- 0.56% op/s
-hashtrie(1000)                :         3039.13 +/- 4.08% op/s
-hamt(1000)                    :        16361.54 +/- 0.84% op/s
-persistent-hash-trie(1000)    :          584.27 +/- 1.77% op/s
-mori hash_map(1000)           :        10343.96 +/- 5.77% op/s
-hashtrie(10000)               :          312.89 +/- 1.11% op/s
-hamt(10000)                   :         3143.75 +/- 1.82% op/s
-persistent-hash-trie(10000)   :          128.02 +/- 3.28% op/s
-mori hash_map(10000)          :         1487.08 +/- 0.92% op/s
+hashtrie(10)                  :       629570.73 +/- 0.71% op/s
+hamt(10)                      :      3856615.89 +/- 0.10% op/s
+persistent-hash-trie(10)      :        96272.11 +/- 1.88% op/s
+mori hash_map(10)             :      1477283.22 +/- 0.04% op/s
+immutable(10)                 :       101628.59 +/- 0.74% op/s
+hashtrie(100)                 :        40887.89 +/- 0.48% op/s
+hamt(100)                     :       334516.36 +/- 0.07% op/s
+persistent-hash-trie(100)     :         7080.56 +/- 0.18% op/s
+mori hash_map(100)            :       147678.71 +/- 0.13% op/s
+immutable(100)                :         8563.35 +/- 0.15% op/s
+hashtrie(1000)                :         3765.28 +/- 0.11% op/s
+hamt(1000)                    :        17273.23 +/- 0.11% op/s
+persistent-hash-trie(1000)    :          544.07 +/- 31.12% op/s
+mori hash_map(1000)           :        10941.14 +/- 2.25% op/s
+immutable(1000)               :          965.96 +/- 0.32% op/s
+hashtrie(10000)               :          342.23 +/- 0.28% op/s
+hamt(10000)                   :         3416.94 +/- 0.13% op/s
+persistent-hash-trie(10000)   :          147.17 +/- 0.48% op/s
+mori hash_map(10000)          :         1510.73 +/- 0.19% op/s
+immutable(10000)              :          125.49 +/- 0.04% op/s
 
 
 Keys
-hashtrie(10)                  :       573317.83 +/- 2.15% op/s
-hamt(10)                      :      2187201.55 +/- 1.21% op/s
-persistent-hash-trie(10)      :       228786.38 +/- 1.07% op/s
-mori hash_map(10)             :       306966.17 +/- 2.11% op/s
-hashtrie(100)                 :        43277.19 +/- 4.69% op/s
-hamt(100)                     :       210677.40 +/- 4.47% op/s
-persistent-hash-trie(100)     :         5736.77 +/- 3.52% op/s
-mori hash_map(100)            :        25283.10 +/- 4.25% op/s
-hashtrie(1000)                :         3268.32 +/- 2.93% op/s
-hamt(1000)                    :        12913.43 +/- 4.42% op/s
-persistent-hash-trie(1000)    :          596.18 +/- 1.02% op/s
-mori hash_map(1000)           :         1934.44 +/- 4.95% op/s
-hashtrie(10000)               :          298.42 +/- 5.71% op/s
-hamt(10000)                   :         2414.70 +/- 7.48% op/s
-persistent-hash-trie(10000)   :          131.67 +/- 1.47% op/s
-mori hash_map(10000)          :          197.68 +/- 3.30% op/s
+hashtrie(10)                  :       495884.59 +/- 1.51% op/s
+hamt(10)                      :      2450253.46 +/- 0.12% op/s
+persistent-hash-trie(10)      :       137743.52 +/- 0.94% op/s
+mori hash_map(10)             :       351650.99 +/- 0.27% op/s
+immutable(10)                 :       109650.20 +/- 4.87% op/s
+hashtrie(100)                 :        33074.59 +/- 1.53% op/s
+hamt(100)                     :       252790.62 +/- 0.10% op/s
+persistent-hash-trie(100)     :         7192.03 +/- 0.41% op/s
+mori hash_map(100)            :        27473.65 +/- 0.51% op/s
+immutable(100)                :         8992.06 +/- 1.14% op/s
+hashtrie(1000)                :         3447.68 +/- 0.29% op/s
+hamt(1000)                    :        14500.51 +/- 0.19% op/s
+persistent-hash-trie(1000)    :          670.08 +/- 0.17% op/s
+mori hash_map(1000)           :         2132.59 +/- 0.31% op/s
+immutable(1000)               :          932.88 +/- 0.37% op/s
+hashtrie(10000)               :          307.57 +/- 2.38% op/s
+hamt(10000)                   :         2652.47 +/- 0.09% op/s
+persistent-hash-trie(10000)   :          151.34 +/- 0.21% op/s
+mori hash_map(10000)          :          211.49 +/- 0.13% op/s
+immutable(10000)              :          104.50 +/- 6.91% op/s
+
 ```
 
 

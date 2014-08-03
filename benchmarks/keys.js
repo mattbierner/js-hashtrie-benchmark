@@ -1,5 +1,5 @@
 /**
- * @fileOverview Cost to keys map of size `n`.
+ * @fileOverview Cost to keys as JS array from map of size `n`.
  */
 var Benchmark = require('benchmark');
 
@@ -7,6 +7,7 @@ var ht = require('hashtrie');
 var hamt = require('hamt');
 var p = require('persistent-hash-trie');
 var mori = require('mori');
+var immutable = require('immutable');
 
 var words = require('./words').words;
 
@@ -47,24 +48,24 @@ var moriKeys = function(keys) {
     for (var i = keys.length - 1; i >= 0; --i)
         h = mori.assoc(h, keys[i], i);
     
+    // I believe this is the closest translation
     return function() {
-        // I believe this is the closest translation
         mori.into_array(mori.keys(h));
     };
 };
 
-var immutable = function(keys) {
-    var h = mori.hash_map();
+var immutableKeys = function(keys) {
+    var h = immutable.Map();
     for (var i = keys.length - 1; i >= 0; --i)
-        h = mori.assoc(h, keys[i], i);
+        h = h.set(keys[i], i);
     
+    // I believe this is the closest translation, but documentation unclear
+    // on what passed and returned by fn.
+    var keys = function key(k, v) { return k; };
     return function() {
-        // I believe this is the closest translation
-        mori.into_array(mori.keys(h));
+        h.map(keys).toArray();
     };
 };
-
-
 
 
 module.exports = function(sizes) {
@@ -81,7 +82,11 @@ module.exports = function(sizes) {
                 pHashtrieKeys(keys))
         
             .add('mori hash_map(' + size+ ')',
-                moriKeys(keys));
+                moriKeys(keys))
+            
+            .add('immutable(' + size+ ')',
+                immutableKeys(keys));
+            
             
     }, new Benchmark.Suite('Keys'));
 };
