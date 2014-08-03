@@ -30,13 +30,15 @@ $ npm run benchmark
 
 
 ### Results
-[results](https://github.com/mattbierner/js-hashtrie-benchmark/wiki/results)
+* [results](https://github.com/mattbierner/js-hashtrie-benchmark/wiki/results)
+* [Overview of basic Javascript hashtries and optimizations](https://blog.mattbierner.com/persistent-hash-tries-in-javavascript/)
+* [Overview of Javascript HAMT implementation and optimization used by the Hamt library](http://blog.mattbierner.com/hash-array-mapped-tries-in-javascript/)
 
 #### Hamt
 My tests show that HAMT is fastest library overall, with good get, update, and fold performance.
 
 #### Hashtrie
-Hashtrie is slightly slower for updates, but up to 10x slower for folds than hashtrie.
+Hashtrie is slightly slower for updates, but up to 10x slower for folds than Hamt.
 Hashtrie's sparse array storage is a [major performance hit](http://jsperf.com/sparse-array-reduce-overhead)
 for folds as neither `reduce` or `splice` show good performance for sparse arrays.
 
