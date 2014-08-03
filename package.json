@@ -24,7 +24,8 @@
         "persistent-hash-trie": "0.4.x",
         "hashtrie": "0.2.x",
         "hamt": "0.1.x",
-        "mori": "0.2.x"
+        "mori": "0.2.x",
+        "immutable": "2.0.x"
     },
     
     "scripts": {

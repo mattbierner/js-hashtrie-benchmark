@@ -53,6 +53,18 @@ var moriKeys = function(keys) {
     };
 };
 
+var immutable = function(keys) {
+    var h = mori.hash_map();
+    for (var i = keys.length - 1; i >= 0; --i)
+        h = mori.assoc(h, keys[i], i);
+    
+    return function() {
+        // I believe this is the closest translation
+        mori.into_array(mori.keys(h));
+    };
+};
+
+
 
 
 module.exports = function(sizes) {

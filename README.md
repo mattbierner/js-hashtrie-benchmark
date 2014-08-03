@@ -5,6 +5,8 @@ Benchmarks 4 Persistent Javascript hashtrie implementations:
 * [hamt][hamt] -  0.1.x
 * [persistent-hash-trie][persistent] - 0.4.x
 * [mori][mori] - 0.2.x
+* [immutable][immutable] - 2.0.x
+
 
 ### Usage
 
@@ -26,14 +28,22 @@ $ npm run benchmark
 * Get all keys in map of size N.
 * Sum all values in map of size N.
 
+
 ### Results
 [results](https://github.com/mattbierner/js-hashtrie-benchmark/wiki/results)
 
-HAMT is fastest overall, with good get, update, and fold performance.
+#### Hamt
+My tests show that HAMT is fastest library overall, with good get, update, and fold performance.
 
+#### Hashtrie
 Hashtrie is slightly slower for updates, but up to 10x slower for folds than hashtrie.
 Hashtrie's sparse array storage is a [major performance hit](http://jsperf.com/sparse-array-reduce-overhead)
 for folds as neither `reduce` or `splice` show good performance for sparse arrays.
+
+#### Mori
+Mori is more difficult to accurately benchmark since it is written in ClojureScript.
+These benchmarks only look at the performance of Mori when called from regular Javascript.
+Actual performance may be better when called from compiled ClojureScript
 
 Mori's `hash_map` is slow for gets, especially as the size of the map increases.
 It is good for updates, but 2-3x slower than hashtrie on large maps. Mori is really
@@ -42,12 +52,21 @@ operation. It uses an even more optimized storage scheme than HAMT and is also f
 to fold large maps. The API is also richer, and the library may be a good choice
 if you can sacrifice some performance.
 
+#### persistent-hash-trie
 persistent-hash-trie has some interesting features, like custom key types and
-breaking walks, but is far too slow. Tests show persistent-hash-trie is
+breaking walks, but is far too slow.
+
+Tests show persistent-hash-trie is
 the fastest for removing all entries from a trie of size 10000. Since this is
 the opposite of puts and single removes, I believe this is related to
 a [bug in the library](https://github.com/hughfdjackson/persistent-hash-trie/issues/24).
 
+#### Immutable
+Immutable generally performs similar to Mori, but it is written in JS. Like Mori, 
+this is a general purpose collection library. The API is richer and will be familiar to 
+OO programmers.
+
+Performance is mixed.
 
 
 ```
@@ -55,7 +74,7 @@ hashtrie - 0.2.2
 hamt - 0.1.4
 mori - 0.2.6
 persistent-hash-trie - 0.4.2
-
+immutable: 2.0.3
 
 Get nth
 hashtrie(10)                  :      7655318.35 +/- 0.32% op/s
@@ -228,3 +247,4 @@ mori hash_map(10000)          :          197.68 +/- 3.30% op/s
 [hamt]: https://github.com/mattbierner/hamt
 [mori]: https://github.com/swannodette/mori
 [persistent]: https://github.com/hughfdjackson/persistent-hash-trie
+[immutable]: https://github.com/facebook/immutable-js

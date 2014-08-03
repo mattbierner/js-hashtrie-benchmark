@@ -7,6 +7,7 @@ var ht = require('hashtrie');
 var hamt = require('hamt');
 var p = require('persistent-hash-trie');
 var mori = require('mori');
+var immutable = require('immutable');
 
 var words = require('./words').words;
 
@@ -57,6 +58,17 @@ var moriGet = function(keys) {
     };
 };
 
+var immutableGet = function(keys) {
+    var h = immutable.Map();
+    for (var i = keys.length - 1; i >= 0; --i)
+        h = h.set(keys[i], i);
+    
+    return function() {
+        var key = keys[Math.floor(Math.random() * keys.length)];
+        h.get(key);
+    };
+};
+
 
 
 module.exports = function(sizes) {
@@ -68,12 +80,15 @@ module.exports = function(sizes) {
             
             .add('hamt(' + size+ ')',
                 hamtGet(keys))
-            
-            .add('persistent-hash-trie(' + size+ ')',
+                
+            .add('persistent-hash-trie(' + size + ')',
                 pHashtrieGet(keys))
-        
+            
             .add('mori hash_map(' + size+ ')',
-                moriGet(keys));
+                moriGet(keys))
+          
+          .add('immutable(' + size+ ')',
+                immutableGet(keys));
             
     }, new Benchmark.Suite('Get nth'));
 };
