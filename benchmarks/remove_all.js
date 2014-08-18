@@ -83,6 +83,32 @@ var immutableRemoveAll = function(keys, order) {
     };
 };
 
+var moriRemoveAllTransient = function(keys, order) {
+    var h = mori.hash_map();
+    for (var i = 0, len = keys.length; i < len; ++i)
+        h = mori.assoc(h, keys[i], i);
+
+    return function() {
+        var c = mori.mutable.thaw(h);
+        for (var i = 0, len = order.length; i < len; ++i)
+           c = mori.mutable.dissoc(c, keys[order[i]]);
+        c = mori.mutable.freeze(c);
+    };
+};
+
+var immutableRemoveAllTransient = function(keys, order) {
+    var h = immutable.Map();
+    for (var i = 0, len = keys.length; i < len; ++i)
+        h = h.set(keys[i], i);
+
+    return function() {
+        var c = h.asMutable();
+        for (var i = 0, len = order.length; i < len; ++i)
+           c = c.delete(keys[order[i]]);
+        c = c.asImmutable();
+    };
+};
+
 
 
 module.exports = function(sizes) {
@@ -103,7 +129,13 @@ module.exports = function(sizes) {
                 moriRemoveAll(keys, order))
             
             .add('immutable(' + size+ ')',
-                immutableRemoveAll(keys, order));
-            
+                immutableRemoveAll(keys, order))
+
+            .add('mori hash_map(' + size+ ') (transient)',
+                moriRemoveAllTransient(keys, order))
+
+            .add('immutable(' + size+ ') (transient)',
+                immutableRemoveAllTransient(keys, order));
+
     }, new Benchmark.Suite('Remove All'));
 };
