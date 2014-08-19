@@ -52,6 +52,24 @@ var immutablePutAll = function(keys) {
     };
 };
 
+var moriPutAllTransient = function(keys) {
+    return function() {
+        var h = mori.mutable.thaw(mori.hash_map());
+        for (var i = 0, len = keys.length; i < len; ++i)
+            h = mori.mutable.assoc(h, keys[i], i);
+        h = mori.mutable.freeze(h);
+    };
+};
+
+var immutablePutAllTransient = function(keys) {
+    return function() {
+        var h = immutable.Map().asMutable();
+        for (var i = 0, len = keys.length; i < len; ++i)
+            h = h.set(keys[i], i);
+        h = h.asImmutable();
+    };
+};
+
 
 module.exports = function(sizes) {
     return sizes.reduce(function(b,size) {
@@ -70,7 +88,13 @@ module.exports = function(sizes) {
                 moriPutAll(keys))
                 
             .add('immutable(' + size+ ')',
-                immutablePutAll(keys));
-            
+                immutablePutAll(keys))
+
+            .add('mori hash_map(' + size+ ') (transient)',
+                moriPutAllTransient(keys))
+
+            .add('immutable(' + size+ ') (transient)',
+                immutablePutAllTransient(keys));
+
     }, new Benchmark.Suite('Put All'));
 };

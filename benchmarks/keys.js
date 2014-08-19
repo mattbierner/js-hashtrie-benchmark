@@ -59,11 +59,8 @@ var immutableKeys = function(keys) {
     for (var i = keys.length - 1; i >= 0; --i)
         h = h.set(keys[i], i);
     
-    // I believe this is the closest translation, but documentation unclear
-    // on what passed and returned by fn.
-    var keys = function key(k, v) { return k; };
     return function() {
-        h.map(keys).toArray();
+        h.keys().toArray();
     };
 };
 
