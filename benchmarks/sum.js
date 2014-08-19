@@ -5,94 +5,89 @@ var Benchmark = require('benchmark');
 
 var ht = require('hashtrie');
 var hamt = require('hamt');
-var p = require('persistent-hash-trie');
+var hamt_plus = require('hamt_plus');
 var mori = require('mori');
 var immutable = require('immutable');
 
 var words = require('./words').words;
+var api = require('./shared');
 
-
-var hashtrieKeys = function(keys) {
+var hashtrieSum = function(keys) {
     var add = function(p, c) { return p + c.value; };
     
-    var h = ht.empty;
-    for (var i = 0; i < keys.length; ++i)
-        h = ht.set(keys[i], i, h);
-    
+    var h = api.hashtrieFrom(keys);
     return function() {
         ht.fold(add, 0, h);
     };
 };
 
-var hamtKeys = function(keys) {
+var hamtSum = function(keys) {
     var add = function(p, c) { return p + c.value; };
     
-    var h = hamt.empty;
-    for (var i = 0; i < keys.length; ++i)
-        h = hamt.set(keys[i], i, h);
-    
+    var h = api.hamtFrom(keys);
     return function() {
         hamt.fold(add, 0, h);
     };
 };
 
+var hamtPlusSum = function(keys) {
+    var add = function(p, c) { return p + c.value; };
+    
+    var h = api.hamtPlusFrom(keys);
+    return function() {
+        hamt_plus.fold(add, 0, h);
+    };
+};
 
-var pHashtrieKeys = function(keys) {
+var pHashtrieSum = function(keys) {
     var add = function(p, c) { return p + c; };
 
-    var h = p.Trie();
-    for (var i = 0; i < keys.length; ++i)
-        h = p.assoc(h, keys[i], i);
-    
+    var h = api.pHashtrieFrom(keys);
     return function() {
         p.reduce(h, add, 0);
     };
 };
 
-var moriKeys = function(keys) {
+var moriSum = function(keys) {
     var add = function(p, _, c) { return p + c; };
     
-    var h = mori.hash_map();
-    for (var i = 0; i < keys.length; ++i)
-        h = mori.assoc(h, keys[i], i);
-    
+    var h = api.moriFrom(keys);
     return function() {
         mori.reduce_kv(add, 0, h);
     };
 };
 
-var immutableKeys = function(keys) {
+var immutableSum = function(keys) {
     var add = function(p, c) { return p + c; };
     
-    var h = immutable.Map();
-    for (var i = 0; i < keys.length; ++i)
-        h = h.set(keys[i], i);
-    
+    var h = api.immutableFrom(keys);
     return function() {
         h.reduce(add, 0);
     };
 };
 
 
-
 module.exports = function(sizes) {
-    return sizes.reduce(function(b,size) {
-        var keys = words(size, 10);
+    return sizes.reduce(function(b, size) {
+        var Sum = words(size, 10);
         return b
-            .add('hashtrie(' + size+ ')',
-                hashtrieKeys(keys))
+            .add('hashtrie(' + size + ')',
+                hashtrieSum(keys))
             
-            .add('hamt(' + size+ ')',
-                hamtKeys(keys))
+            .add('hamt(' + size + ')',
+                hamtSum(keys))
+                
+            add('hamt_plus(' + size + ')',
+                hamtPlusSum(keys))
             
-            .add('persistent-hash-trie(' + size+ ')',
-                pHashtrieKeys(keys))
-        
-            .add('mori hash_map(' + size+ ')',
-                moriKeys(keys))
+            .add('persistent-hash-trie(' + size + ')',
+                pHashtrieSum(keys))
+                
+            .add('mori hash_map(' + size + ')',
+                moriSum(keys))
                 
             .add('immutable(' + size + ')',
-                immutableKeys(keys));
+                immutableSum(keys));
           
     }, new Benchmark.Suite('Sum'));
 };

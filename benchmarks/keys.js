@@ -5,49 +5,45 @@ var Benchmark = require('benchmark');
 
 var ht = require('hashtrie');
 var hamt = require('hamt');
+var hamt_plus = require('hamt_plus');
 var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
 
 var words = require('./words').words;
+var api = require('./shared');
 
 
 var hashtrieKeys = function(keys) {
-    var h = ht.empty;
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = ht.set(keys[i], i, h);
-    
+    var h = api.hashtrieFrom(keys);
     return function() {
         ht.keys(h);
     };
 };
 
 var hamtKeys = function(keys) {
-    var h = hamt.empty;
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = hamt.set(keys[i], i, h);
-    
+    var h = api.hamtFrom(keys);
     return function() {
         hamt.keys(h);
     };
 };
 
+var hamtPlusKeys = function(keys) {
+    var h = api.hamtPlusFrom(keys);
+    return function() {
+        hamt_plus.keys(h);
+    };
+};
 
 var pHashtrieKeys = function(keys) {
-    var h = p.Trie();
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = p.assoc(h, keys[i], i);
-    
+    var h = api.pHashtrieFrom(keys);
     return function() {
         p.keys(h);
     };
 };
 
 var moriKeys = function(keys) {
-    var h = mori.hash_map();
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = mori.assoc(h, keys[i], i);
-    
+    var h = api.moriFrom(keys);
     // I believe this is the closest translation
     return function() {
         mori.into_array(mori.keys(h));
@@ -55,10 +51,7 @@ var moriKeys = function(keys) {
 };
 
 var immutableKeys = function(keys) {
-    var h = immutable.Map();
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = h.set(keys[i], i);
-    
+    var h = api.immutableFrom(keys);
     return function() {
         h.keys().toArray();
     };
@@ -66,22 +59,25 @@ var immutableKeys = function(keys) {
 
 
 module.exports = function(sizes) {
-    return sizes.reduce(function(b,size) {
+    return sizes.reduce(function(b, size) {
         var keys = words(size, 10);
         return b
-            .add('hashtrie(' + size+ ')',
+            .add('hashtrie(' + size + ')',
                 hashtrieKeys(keys))
             
-            .add('hamt(' + size+ ')',
+            .add('hamt(' + size + ')',
                 hamtKeys(keys))
             
-            .add('persistent-hash-trie(' + size+ ')',
+            .add('hamt_plus(' + size + ')',
+                hamtPlusKeys(keys))
+            
+            .add('persistent-hash-trie(' + size + ')',
                 pHashtrieKeys(keys))
         
-            .add('mori hash_map(' + size+ ')',
+            .add('mori hash_map(' + size + ')',
                 moriKeys(keys))
             
-            .add('immutable(' + size+ ')',
+            .add('immutable(' + size + ')',
                 immutableKeys(keys));
             
             

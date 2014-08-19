@@ -71,11 +71,8 @@ on aggregate operations like `sum` or `keys`. `count` is also a constant time
 key lookup.
 
 It is written in JS. Like Mori, this is a general purpose collection library.
-The API is richer and will be familiar to  OO programmers, but I disagree with
-many of the design decisions. Batching may drastically improve performance, but
-these benchmarks do not consider batch operations.
-
-Overall, Mori is clearly the better choice if you need a general purpose collection library.
+The API is richer and will be familiar to  OO programmers. Overall, Mori seems like
+the better choice if you need a general purpose collection library.
 
 
 ```

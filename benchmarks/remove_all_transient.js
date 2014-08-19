@@ -1,27 +1,20 @@
 /**
  * @fileOverview Cost to removed all entries from a hashtrie of size `n`.
+ * 
+ * Uses transient mutation if supported.
  */
 var Benchmark = require('benchmark');
 
-var ht = require('hashtrie');
 var hamt = require('hamt');
 var hamt_plus = require('hamt_plus');
-var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
 
 var words = require('./words').words;
 var range = require('./words').range;
+
 var api = require('./shared');
 
-var hashtrieRemoveAll = function(keys, order) {
-    var h = api.hashtrieFrom(keys);
-    return function() {
-        var c = h;
-        for (var i = 0, len = order.length; i < len; ++i)
-            c = ht.remove(keys[order[i]], c);
-    };
-};
 
 var hamtRemoveAll = function(keys, order) {
     var h = api.hamtFrom(keys);
@@ -33,40 +26,37 @@ var hamtRemoveAll = function(keys, order) {
 };
 
 var hamtPlusRemoveAll = function(keys, order) {
+    var mutate = function(h) {
+        for (var i = 0, len = order.length; i < len; ++i)
+            h = hamt_plus.remove(keys[order[i]], h);
+    };
+    
     var h = api.hamtPlusFrom(keys);
     return function() {
-        var c = h;
-        for (var i = 0, len = order.length; i < len; ++i)
-            c = hamt_plus.remove(keys[order[i]], c);
-    };
-};
-
-var pHashtrieRemoveAll = function(keys, order) {
-    var h = api.pHashtrieFrom(keys);
-    return function() {
-        var c = h;
-        for (var i = 0, len = order.length; i < len; ++i)
-           c = p.dissoc(c, keys[order[i]]);
+        hamt_plus.mutate(mutate, h);
     };
 };
 
 var moriRemoveAll = function(keys, order) {
     var h = api.moriFrom(keys);
     return function() {
-        var c = h;
+        var c = mori.mutable.thaw(h);
         for (var i = 0, len = order.length; i < len; ++i)
-           c = mori.dissoc(c, keys[order[i]]);
+           c = mori.mutable.dissoc(c, keys[order[i]]);
+        c = mori.mutable.freeze(c);
     };
 };
 
 var immutableRemoveAll = function(keys, order) {
     var h = api.immutableFrom(keys);
     return function() {
-        var c = h;
+        var c = h.asMutable();
         for (var i = 0, len = order.length; i < len; ++i)
            c = c.delete(keys[order[i]]);
+        c = c.asImmutable();
     };
 };
+
 
 
 module.exports = function(sizes) {
@@ -74,18 +64,12 @@ module.exports = function(sizes) {
         var keys = words(size, 10),
             order = range(0, size);
         return b
-            .add('hashtrie(' + size + ')',
-                hashtrieRemoveAll(keys, order))
-            
             .add('hamt(' + size + ')',
                 hamtRemoveAll(keys, order))
             
-            .add('hamt_plus(' + size + ')',
+           .add('hamt_plus(' + size + ')',
                 hamtPlusRemoveAll(keys, order))
-                
-            .add('persistent-hash-trie(' + size + ')',
-                pHashtrieRemoveAll(keys, order))
-                
+            
             .add('mori hash_map(' + size + ')',
                 moriRemoveAll(keys, order))
             

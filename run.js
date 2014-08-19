@@ -25,11 +25,19 @@ require('./benchmarks/put_all')([10, 100, 1000, 10000])
     .on('complete', log)
     .run(true);
 
+require('./benchmarks/put_all_transient')([10, 100, 1000, 10000])
+    .on('complete', log)
+    .run(true);
+
 require('./benchmarks/remove')([10, 100, 1000, 10000, 100000])
     .on('complete', log)
     .run(true);
 
 require('./benchmarks/remove_all')([10, 100, 1000, 10000])
+    .on('complete', log)
+    .run(true);
+
+require('./benchmarks/remove_all_transient')([10, 100, 1000, 10000])
     .on('complete', log)
     .run(true);
 

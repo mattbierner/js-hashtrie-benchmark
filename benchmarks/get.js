@@ -5,19 +5,18 @@ var Benchmark = require('benchmark');
 
 var ht = require('hashtrie');
 var hamt = require('hamt');
+var hamt_plus = require('hamt_plus');
 var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
 
 var words = require('./words').words;
+var api = require('./shared');
 
 
 
 var hashtrieGet = function(keys) {
-    var h = ht.empty;
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = ht.set(keys[i], i, h);
-    
+    var h = api.hashtrieFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
         ht.get(key, h);
@@ -25,22 +24,24 @@ var hashtrieGet = function(keys) {
 };
 
 var hamtGet = function(keys) {
-    var h = hamt.empty;
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = hamt.set(keys[i], i, h);
-    
+    var h = api.hamtFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
         hamt.get(key, h);
     };
 };
 
+var hamtPlusGet = function(keys) {
+    var h = api.hamtPlusFrom(keys);
+    return function() {
+        var key = keys[Math.floor(Math.random() * keys.length)];
+        hamt_plus.get(key, h);
+    };
+};
+
 
 var pHashtrieGet = function(keys) {
-    var h = p.Trie();
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = p.assoc(h, keys[i], i);
-    
+    var h = api.pHashtrieFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
         p.get(h, key);
@@ -48,10 +49,7 @@ var pHashtrieGet = function(keys) {
 };
 
 var moriGet = function(keys) {
-    var h = mori.hash_map();
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = mori.assoc(h, keys[i], i);
-    
+    var h = api.moriFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
         mori.get(h, key);
@@ -59,10 +57,7 @@ var moriGet = function(keys) {
 };
 
 var immutableGet = function(keys) {
-    var h = immutable.Map();
-    for (var i = keys.length - 1; i >= 0; --i)
-        h = h.set(keys[i], i);
-    
+    var h = api.immutableFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
         h.get(key);
@@ -70,24 +65,26 @@ var immutableGet = function(keys) {
 };
 
 
-
 module.exports = function(sizes) {
-    return sizes.reduce(function(b,size) {
+    return sizes.reduce(function(b, size) {
         var keys = words(size, 10);
         return b
-            .add('hashtrie(' + size+ ')',
+            .add('hashtrie(' + size + ')',
                 hashtrieGet(keys))
             
-            .add('hamt(' + size+ ')',
+            .add('hamt(' + size + ')',
                 hamtGet(keys))
+            
+           .add('hamt_plus(' + size + ')',
+                hamtPlusGet(keys))
                 
             .add('persistent-hash-trie(' + size + ')',
                 pHashtrieGet(keys))
             
-            .add('mori hash_map(' + size+ ')',
+            .add('mori hash_map(' + size + ')',
                 moriGet(keys))
           
-          .add('immutable(' + size+ ')',
+          .add('immutable(' + size + ')',
                 immutableGet(keys));
             
     }, new Benchmark.Suite('Get nth'));

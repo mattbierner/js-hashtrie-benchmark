@@ -13,3 +13,15 @@ exports.words = function(count, wl) {
     }
     return out;
 };
+
+exports.range = function(start, end) {
+    var indicies = [], out = [];
+    for (var i = start; i < end; ++i)
+        indicies.push(i);
+    while (indicies.length) {
+        var index = Math.floor(Math.random() * indicies.length);
+        out.push(indicies[index]);
+        indicies.splice(index, 1);
+    }
+    return out;
+};
