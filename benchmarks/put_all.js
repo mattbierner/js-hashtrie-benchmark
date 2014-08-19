@@ -29,6 +29,14 @@ var hamtPutAll = function(keys) {
     };
 };
 
+var hamtPlusPutAll = function(keys) {
+    return function() {
+        var h = hamt_plus.make();
+        for (var i = 0, len = keys.length; i < len; ++i)
+            h = hamt_plus.set(keys[i], i, h);
+    };
+};
+
 var pHashtriePutAll = function(keys) {
     return function() {
         var h = p.Trie();

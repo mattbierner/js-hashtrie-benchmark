@@ -12,7 +12,6 @@ var immutable = require('immutable');
 
 var words = require('./words').words;
 var range = require('./words').range;
-
 var api = require('./shared');
 
 
@@ -76,5 +75,5 @@ module.exports = function(sizes) {
             .add('immutable(' + size + ')',
                 immutableRemoveAll(keys, order));
 
-    }, new Benchmark.Suite('Remove All'));
+    }, new Benchmark.Suite('Remove All (transient)'));
 };

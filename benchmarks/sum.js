@@ -6,11 +6,13 @@ var Benchmark = require('benchmark');
 var ht = require('hashtrie');
 var hamt = require('hamt');
 var hamt_plus = require('hamt_plus');
+var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
 
 var words = require('./words').words;
 var api = require('./shared');
+
 
 var hashtrieSum = function(keys) {
     var add = function(p, c) { return p + c.value; };
@@ -69,23 +71,23 @@ var immutableSum = function(keys) {
 
 module.exports = function(sizes) {
     return sizes.reduce(function(b, size) {
-        var Sum = words(size, 10);
+        var keys = words(size, 10);
         return b
             .add('hashtrie(' + size + ')',
                 hashtrieSum(keys))
             
             .add('hamt(' + size + ')',
                 hamtSum(keys))
-                
-            add('hamt_plus(' + size + ')',
+            
+            .add('hamt_plus(' + size + ')',
                 hamtPlusSum(keys))
             
             .add('persistent-hash-trie(' + size + ')',
                 pHashtrieSum(keys))
-                
+            
             .add('mori hash_map(' + size + ')',
                 moriSum(keys))
-                
+            
             .add('immutable(' + size + ')',
                 immutableSum(keys));
           

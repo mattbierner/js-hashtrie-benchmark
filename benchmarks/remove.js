@@ -5,7 +5,7 @@ var Benchmark = require('benchmark');
 
 var ht = require('hashtrie');
 var hamt = require('hamt');
-var hamt_plus = require('hamt');
+var hamt_plus = require('hamt_plus');
 var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
@@ -48,7 +48,7 @@ var pHashtrieRemove = function(keys) {
 };
 
 var moriRemove = function(keys) {
-    var h = api.moriForm(keys);
+    var h = api.moriFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
         mori.dissoc(h, key);
@@ -75,7 +75,7 @@ module.exports = function(sizes) {
                 hamtRemove(keys))
             
              .add('hamt_plus(' + size + ')',
-                hamtRemove(keys))
+                hamtPlusRemove(keys))
             
             .add('persistent-hash-trie(' + size + ')',
                 pHashtrieRemove(keys))
