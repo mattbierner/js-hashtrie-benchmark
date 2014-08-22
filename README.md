@@ -384,5 +384,4 @@ immutable(10000)              :         1267.94 +/- 0.22% op/s
 
 [clojurescript]: https://github.com/clojure/clojurescript
 [khepri]: http://khepri-lang.com
-[khepri]: http://khepri-lang.com
-[khepri]: http://khepri-lang.com
+
