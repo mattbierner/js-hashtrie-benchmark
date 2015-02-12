@@ -47,7 +47,7 @@ var pHashtriePutAll = function(keys) {
 
 var moriPutAll = function(keys) {
     return function() {
-        var h = mori.hash_map();
+        var h = mori.hashMap();
         for (var i = 0, len = keys.length; i < len; ++i)
             h = mori.assoc(h, keys[i], i);
     };

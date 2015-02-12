@@ -51,7 +51,7 @@ var moriCount = function(keys) {
 var immutableCount = function(keys) {
     var h = api.immutableFrom(keys);
     return function() {
-        h.length;
+        h.count();
     };
 };
 

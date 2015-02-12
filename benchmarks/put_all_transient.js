@@ -36,7 +36,7 @@ var hamtPlusPutAll = function(keys) {
 
 var moriPutAll = function(keys) {
     return function() {
-        var h = mori.mutable.thaw(mori.hash_map());
+        var h = mori.mutable.thaw(mori.hashMap());
         for (var i = 0, len = keys.length; i < len; ++i)
             h = mori.mutable.assoc(h, keys[i], i);
         h = mori.mutable.freeze(h);

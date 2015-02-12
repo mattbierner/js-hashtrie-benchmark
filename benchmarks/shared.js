@@ -36,7 +36,7 @@ exports.pHashtrieFrom = function(keys) {
 };
 
 exports.moriFrom = function(keys) {
-    var h = mori.hash_map();
+    var h = mori.hashMap();
     for (var i = keys.length - 1; i >= 0; --i)
         h = mori.assoc(h, keys[i], i);
     return h;
