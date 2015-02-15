@@ -55,7 +55,7 @@ var moriSum = function(keys) {
     
     var h = api.moriFrom(keys);
     return function() {
-        mori.reduce_kv(add, 0, h);
+        mori.reduceKV(add, 0, h);
     };
 };
 

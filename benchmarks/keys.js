@@ -46,7 +46,7 @@ var moriKeys = function(keys) {
     var h = api.moriFrom(keys);
     // I believe this is the closest translation
     return function() {
-        mori.into_array(mori.keys(h));
+        mori.intoArray(mori.keys(h));
     };
 };
 
