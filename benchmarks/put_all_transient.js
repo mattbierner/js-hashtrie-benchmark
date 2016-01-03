@@ -18,7 +18,7 @@ var hamtPutAll = function(keys) {
     return function() {
         var h = hamt.empty;
         for (var i = 0, len = keys.length; i < len; ++i)
-            h = hamt.set(keys[i], i, h);
+            h = hamt.set(i, keys[i], h);
     };
 };
 

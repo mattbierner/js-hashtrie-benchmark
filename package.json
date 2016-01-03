@@ -23,10 +23,10 @@
         
         "persistent-hash-trie": "0.4.x",
         "hashtrie": "0.2.x",
-        "hamt": "0.1.x",
+        "hamt": "1.1.x",
         "hamt_plus": "0.0.x",
         "mori": "0.3.x",
-        "immutable": "3.6.x"
+        "immutable": "3.7.x"
     },
     
     "scripts": {

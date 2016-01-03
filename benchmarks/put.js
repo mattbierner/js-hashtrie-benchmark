@@ -26,7 +26,7 @@ var hamtPut = function(keys) {
     var h = api.hamtFrom(keys.slice(1));
     var key = keys[0];
     return function() {
-        hamt.set(key, 0, h);
+        hamt.set(0, key, h);
     };
 };
 

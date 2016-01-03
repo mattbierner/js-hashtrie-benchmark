@@ -24,7 +24,7 @@ var hashtrieSum = function(keys) {
 };
 
 var hamtSum = function(keys) {
-    var add = function(p, c) { return p + c.value; };
+    var add = function(p, x) { return p + x; };
     
     var h = api.hamtFrom(keys);
     return function() {

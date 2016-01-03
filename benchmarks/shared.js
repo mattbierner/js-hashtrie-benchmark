@@ -6,11 +6,10 @@ var mori = require('mori');
 var immutable = require('immutable');
 
 
-
 exports.hamtFrom = function(keys) {
     var h = hamt.empty;
     for (var i = keys.length - 1; i >= 0; --i)
-        h = hamt.set(keys[i], i, h);
+        h = h.set(keys[i], i);
     return h;
 };
 

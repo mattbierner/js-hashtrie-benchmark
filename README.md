@@ -48,7 +48,7 @@ HAMT+ is slightly slower than HAMT for immutable update and get operation, but
 adds support for transient mutation and custom key types. This allows HAMT+ to
 be significantly faster than HAMT for batched transform operations.
 
-Even as the size of the map increases, HAMT and HAMT+ often perform 2X or faster than the next fastest library.
+Even as the size of the map increases, HAMT and HAMT+ often perform 2X or faster than the next fastest library in my testing.
 
 #### Hashtrie
 Hashtrie is slightly slower than HAMT for updates, but up to 10x slower for folds.
