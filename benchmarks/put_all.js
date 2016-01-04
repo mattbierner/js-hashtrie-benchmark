@@ -17,7 +17,7 @@ var hashtriePutAll = function(keys) {
     return function() {
         var h = ht.empty;
         for (var i = 0, len = keys.length; i < len; ++i)
-            h = ht.set(keys[i], i, h);
+            h = ht.set(i, keys[i], h);
     };
 };
 

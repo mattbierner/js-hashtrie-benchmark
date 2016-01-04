@@ -18,7 +18,7 @@ var hashtriePut = function(keys) {
     var h = api.hashtrieFrom(keys.slice(1));
     var key = keys[0];
     return function() {
-        ht.set(key, 0, h);
+        ht.set(0, key, h);
     };
 };
 

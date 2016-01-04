@@ -23,7 +23,7 @@ exports.hamtPlusFrom = function(keys) {
 exports.hashtrieFrom = function(keys) {
     var h = ht.empty;
     for (var i = keys.length - 1; i >= 0; --i)
-        h = ht.set(keys[i], i, h);
+        h = h.set(keys[i], i);
     return h;
 };
 
