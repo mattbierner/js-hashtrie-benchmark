@@ -78,12 +78,10 @@ the opposite of puts and single removes, I believe this is related to
 a [bug in the library](https://github.com/hughfdjackson/persistent-hash-trie/issues/24).
 
 #### Immutable
-Immutable performs between Mori and HAMT for most basic operations. `count` is
+Immutable performs well for most basic operations. `count` is
 also a constant time operation. Transient mutation is one of the libraries strong points. 
 
-Unlike Mori which uses [ClojureScript][ClojureScript] and the HAMT libraries which are written in [Khepri][khepri],
-Immutable is written in regular Javascript. Like Mori, Immutable is also a general
-purpose collection library. Its API is richer and will be familiar to  OO programmers. 
+Like Mori, Immutable is also a general purpose collection library with many other APIs and features not offered by the smaller libraries.
 
 
 ```
