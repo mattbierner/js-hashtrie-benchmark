@@ -53,7 +53,7 @@ var moriKeys = function(keys) {
 var immutableKeys = function(keys) {
     var h = api.immutableFrom(keys);
     return function() {
-        h.keys().toArray();
+        h.keySeq().toArray();
     };
 };
 
