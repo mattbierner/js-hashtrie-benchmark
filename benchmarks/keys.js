@@ -24,7 +24,7 @@ var hashtrieKeys = function(keys) {
 var hamtKeys = function(keys) {
     var h = api.hamtFrom(keys);
     return function() {
-        hamt.keys(h);
+        Array.from(hamt.keys(h));
     };
 };
 
