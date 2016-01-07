@@ -13,6 +13,20 @@ var immutable = require('immutable');
 var words = require('./words').words;
 var api = require('./shared');
 
+var nativeObjectCount = function(keys) {
+  var h = api.nativeObjectFrom(keys);
+  return function() {
+    Object.keys(h).length;
+  }
+};
+
+var nativeMapCount = function(keys) {
+  var h = api.nativeMapFrom(keys);
+  return function() {
+    h.size;
+  };
+};
+
 var hashtrieCount = function(keys) {
     var h = api.hashtrieFrom(keys);
     return function() {
@@ -60,23 +74,29 @@ module.exports = function(sizes) {
     return sizes.reduce(function(b,size) {
         var keys = words(size, 10);
         return b
+            .add('nativeObject(' + size+ ')',
+                nativeObjectCount(keys))
+
+            .add('nativeMap(' + size+ ')',
+                nativeMapCount(keys))
+
             .add('hashtrie(' + size+ ')',
                 hashtrieCount(keys))
-            
+
             .add('hamt(' + size+ ')',
                 hamtCount(keys))
-            
+
             .add('hamt_plus(' + size+ ')',
                 hamtPlusCount(keys))
-            
+
             .add('persistent-hash-trie(' + size+ ')',
                 pHashtrieCount(keys))
-        
+
             .add('mori hash_map(' + size+ ')',
                 moriCount(keys))
-        
+
             .add('immutable(' + size+ ')',
                 immutableCount(keys));
-            
+
     }, new Benchmark.Suite('Count'));
 };

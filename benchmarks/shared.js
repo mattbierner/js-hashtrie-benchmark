@@ -5,6 +5,19 @@ var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
 
+exports.nativeObjectFrom = function(keys) {
+  return keys.reduce( function(map, val, index) {
+    map[val] = index;
+    return map;
+  }, {} );
+}
+
+exports.nativeMapFrom = function(keys) {
+  return keys.reduce( function(map, val, index) {
+    map.set( val, index );
+    return map;
+  }, new Map());
+}
 
 exports.hamtFrom = function(keys) {
     var h = hamt.empty;
