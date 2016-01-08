@@ -17,9 +17,10 @@ var api = require('./shared');
 var nativeObjectRemoveAll = function(keys, order) {
   var h = api.nativeObjectFrom(keys);
   return function() {
-    for( var i = 0, len = order.length; i < len; ++i ) {
-      c = Object.assign( {}, h );
-      delete c[ order[i] ];
+    var c;
+    for(var i = 0, len = order.length; i < len; ++i) {
+      c = Object.assign({}, h);
+      delete c[order[i]];
     }
   };
 };
@@ -28,9 +29,9 @@ var nativeMapRemoveAll = function(keys, order) {
   var h = api.nativeMapFrom(keys);
   return function() {
     var c;
-    for( var i = 0, len = order.length; i < len; ++i ) {
-      c = new Map( h );
-      c.delete( order[i] );
+    for(var i = 0, len = order.length; i < len; ++i) {
+      c = new Map(h);
+      c.delete(order[i]);
     }
   };
 };

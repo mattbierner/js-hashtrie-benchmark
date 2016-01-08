@@ -15,8 +15,8 @@ var words = require('./words').words;
 var nativeObjectPutAll = function(keys){
   return function() {
     var h = {};
-    for( var i = 0; i < keys.length; ++i ) {
-      h = Object.assign( {}, h );
+    for( var i = 0, len = keys.length; i < len; ++i ) {
+      h = Object.assign({}, h);
       h[keys[i]] = i;
     }
   };
@@ -25,9 +25,9 @@ var nativeObjectPutAll = function(keys){
 var nativeMapPutAll = function(keys) {
   return function() {
     var h = new Map();
-    for( var i = 0; i < keys.length; ++i ) {
+    for( var i = 0, len = keys.length; i < len; ++i ) {
       h = new Map( h );
-      h.set( keys[i], i );
+      h.set(keys[i], i);
     }
   };
 }

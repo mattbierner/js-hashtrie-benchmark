@@ -17,7 +17,9 @@ var nativeObjectPut = function(keys) {
   var h = api.nativeObjectFrom(keys.slice(1));
   var key = keys[0];
   return function() {
-    Object.assign( {}, h, {[key]: 0});
+    var newKey = {};
+    newKey[key] = 0;
+    Object.assign({}, h, newKey);
   };
 };
 
@@ -25,7 +27,7 @@ var nativeMapPut = function(keys) {
   var h = api.nativeMapFrom(keys.slice(1));
   var key = keys[0];
   return function() {
-    c = new Map( h );
+    c = new Map(h);
     c.set(key, 0);
   };
 };
