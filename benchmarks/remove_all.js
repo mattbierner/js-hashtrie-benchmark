@@ -17,9 +17,9 @@ var api = require('./shared');
 var nativeObjectRemoveAll = function(keys, order) {
   var h = api.nativeObjectFrom(keys);
   return function() {
-    var c;
+    var c = h;
     for(var i = 0, len = order.length; i < len; ++i) {
-      c = Object.assign({}, h);
+      c = Object.assign({}, c);
       delete c[order[i]];
     }
   };
@@ -28,9 +28,9 @@ var nativeObjectRemoveAll = function(keys, order) {
 var nativeMapRemoveAll = function(keys, order) {
   var h = api.nativeMapFrom(keys);
   return function() {
-    var c;
+    var c = h;
     for(var i = 0, len = order.length; i < len; ++i) {
-      c = new Map(h);
+      c = new Map(c);
       c.delete(order[i]);
     }
   };
