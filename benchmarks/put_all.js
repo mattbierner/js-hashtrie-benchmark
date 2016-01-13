@@ -12,6 +12,25 @@ var immutable = require('immutable');
 
 var words = require('./words').words;
 
+var nativeObjectPutAll = function(keys){
+  return function() {
+    var h = {};
+    for( var i = 0, len = keys.length; i < len; ++i ) {
+      h = Object.assign({}, h);
+      h[keys[i]] = i;
+    }
+  };
+};
+
+var nativeMapPutAll = function(keys) {
+  return function() {
+    var h = new Map();
+    for( var i = 0, len = keys.length; i < len; ++i ) {
+      h = new Map( h );
+      h.set(keys[i], i);
+    }
+  };
+}
 
 var hashtriePutAll = function(keys) {
     return function() {
@@ -66,21 +85,27 @@ module.exports = function(sizes) {
     return sizes.reduce(function(b,size) {
         var keys = words(size, 10);
         return b
+            .add('nativeObject(' + size + ')',
+                nativeObjectPutAll(keys))
+
+            .add('nativeMap(' + size + ')',
+                nativeMapPutAll(keys))
+
             .add('hashtrie(' + size + ')',
                 hashtriePutAll(keys))
-            
+
             .add('hamt(' + size + ')',
                 hamtPutAll(keys))
-            
+
              .add('hamt_plus(' + size + ')',
                 hamtPlusPutAll(keys))
-            
+
             .add('persistent-hash-trie(' + size + ')',
                 pHashtriePutAll(keys))
-            
+
             .add('mori hash_map(' + size + ')',
                 moriPutAll(keys))
-            
+
             .add('immutable(' + size + ')',
                 immutablePutAll(keys));
 

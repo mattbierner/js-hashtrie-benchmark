@@ -1,6 +1,6 @@
 /**
  * @fileOverview Cost to put `n` entries into the hash.
- * 
+ *
  * Uses transiently mutable object interface if possible
  */
 var Benchmark = require('benchmark');
@@ -13,6 +13,23 @@ var immutable = require('immutable');
 
 var words = require('./words').words;
 
+var nativeObjectPutAll = function(keys){
+  return function() {
+    var h = {};
+    for(var i = 0, len = keys.length; i < len; ++i) {
+      h[keys[i]] = i;
+    }
+  };
+};
+
+var nativeMapPutAll = function(keys) {
+  return function() {
+    var h = new Map();
+    for(var i = 0, len = keys.length; i < len; ++i) {
+      h.set(keys[i], i);
+    }
+  };
+}
 
 var hamtPutAll = function(keys) {
     return function() {
@@ -57,17 +74,23 @@ module.exports = function(sizes) {
     return sizes.reduce(function(b,size) {
         var keys = words(size, 10);
         return b
+            .add('nativeObject(' + size + ')',
+                nativeObjectPutAll(keys))
+
+            .add('nativeMap(' + size + ')',
+                nativeMapPutAll(keys))
+
             .add('hamt(' + size + ')',
                 hamtPutAll(keys))
-            
+
             .add('hamt_plus(' + size + ')',
                 hamtPlusPutAll(keys))
-            
+
             .add('mori hash_map(' + size + ')',
                 moriPutAll(keys))
-                
+
             .add('immutable(' + size + ')',
                 immutablePutAll(keys));
-    
+
     }, new Benchmark.Suite('Put All (transient)'));
 };

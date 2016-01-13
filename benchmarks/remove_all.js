@@ -14,6 +14,28 @@ var words = require('./words').words;
 var range = require('./words').range;
 var api = require('./shared');
 
+var nativeObjectRemoveAll = function(keys, order) {
+  var h = api.nativeObjectFrom(keys);
+  return function() {
+    var c = h;
+    for(var i = 0, len = order.length; i < len; ++i) {
+      c = Object.assign({}, c);
+      delete c[order[i]];
+    }
+  };
+};
+
+var nativeMapRemoveAll = function(keys, order) {
+  var h = api.nativeMapFrom(keys);
+  return function() {
+    var c = h;
+    for(var i = 0, len = order.length; i < len; ++i) {
+      c = new Map(c);
+      c.delete(order[i]);
+    }
+  };
+};
+
 var hashtrieRemoveAll = function(keys, order) {
     var h = api.hashtrieFrom(keys);
     return function() {
@@ -74,21 +96,27 @@ module.exports = function(sizes) {
         var keys = words(size, 10),
             order = range(0, size);
         return b
+            .add('nativeObject(' + size + ')',
+                nativeObjectRemoveAll(keys, order))
+
+            .add('nativeMap(' + size + ')',
+                nativeMapRemoveAll(keys, order))
+
             .add('hashtrie(' + size + ')',
                 hashtrieRemoveAll(keys, order))
-            
+
             .add('hamt(' + size + ')',
                 hamtRemoveAll(keys, order))
-            
+
             .add('hamt_plus(' + size + ')',
                 hamtPlusRemoveAll(keys, order))
-                
+
             .add('persistent-hash-trie(' + size + ')',
                 pHashtrieRemoveAll(keys, order))
-                
+
             .add('mori hash_map(' + size + ')',
                 moriRemoveAll(keys, order))
-            
+
             .add('immutable(' + size + ')',
                 immutableRemoveAll(keys, order));
 

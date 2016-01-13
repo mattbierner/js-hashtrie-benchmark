@@ -13,7 +13,21 @@ var immutable = require('immutable');
 var words = require('./words').words;
 var api = require('./shared');
 
+var nativeObjectGet = function(keys) {
+  var h = api.nativeObjectFrom(keys);
+  return function() {
+    var key = keys[Math.floor(Math.random() * keys.length)];
+    h[key];
+  };
+};
 
+var nativeMapGet = function(keys) {
+  var h = api.nativeMapFrom(keys);
+  return function() {
+    var key = keys[Math.floor(Math.random() * keys.length)];
+    h.get(key);
+  };
+};
 
 var hashtrieGet = function(keys) {
     var h = api.hashtrieFrom(keys);
@@ -69,23 +83,29 @@ module.exports = function(sizes) {
     return sizes.reduce(function(b, size) {
         var keys = words(size, 10);
         return b
+            .add('nativeObject(' + size + ')',
+                nativeObjectGet(keys))
+
+            .add('nativeMap(' + size + ')',
+                nativeMapGet(keys))
+
             .add('hashtrie(' + size + ')',
                 hashtrieGet(keys))
-            
+
             .add('hamt(' + size + ')',
                 hamtGet(keys))
-            
+
            .add('hamt_plus(' + size + ')',
                 hamtPlusGet(keys))
-                
+
             .add('persistent-hash-trie(' + size + ')',
                 pHashtrieGet(keys))
-            
+
             .add('mori hash_map(' + size + ')',
                 moriGet(keys))
-          
-          .add('immutable(' + size + ')',
+
+            .add('immutable(' + size + ')',
                 immutableGet(keys));
-            
+
     }, new Benchmark.Suite('Get nth'));
 };
