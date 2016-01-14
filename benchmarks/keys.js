@@ -41,6 +41,15 @@ var hamtKeys = function(keys) {
     };
 };
 
+var hamtKeysUsingFold = function(keys) {
+    var h = api.hamtFrom(keys);
+    var build = function(p, _, k) { p.push(k); return p; }
+    
+    return function() {
+        hamt.fold(build, [], h);
+    };
+};
+
 var hamtPlusKeys = function(keys) {
     var h = api.hamtPlusFrom(keys);
     return function() {
@@ -86,7 +95,10 @@ module.exports = function(sizes) {
 
             .add('hamt(' + size + ')',
                 hamtKeys(keys))
-
+                
+            .add('hamt fold implementation(' + size + ')',
+                hamtKeysUsingFold(keys))
+                
             .add('hamt_plus(' + size + ')',
                 hamtPlusKeys(keys))
 
@@ -98,7 +110,6 @@ module.exports = function(sizes) {
 
             .add('immutable(' + size + ')',
                 immutableKeys(keys));
-
-
+    
     }, new Benchmark.Suite('Keys'));
 };
