@@ -42,16 +42,16 @@ The following are benchmarked:
 * [Overview of Javascript HAMT implementation and optimization used by the HAMT library](http://blog.mattbierner.com/hash-array-mapped-tries-in-javascript/)
 
 ### Interesting Notes
-* Immutable, HAMT, and HAMT+ are the three fasted implementations.
+* HAMT, HAMT+, and Immutable are the three fasted implementations.
 * These three library also perform well as the map size gets very large. It only costs ~6x as much to put an element into a HAMT map with 100000 entries as it does to put one into a HAMT map with 10 entries. 
 * The immutability through copying used for Object and Map is too slow to use for larger objects. Their memory usage is likely much higher as well.
 * Hashtrie's sparse array storage is a [major performance hit](http://jsperf.com/sparse-array-reduce-overhead)
 for folds as neither `reduce` or `splice` show good performance for sparse arrays.
 * Both Mori and Immutable are more complete data structure libraries. This should be considered when selecting an immutable map implementation.
-* HAMT's use of iterators for some operations results in some overhead in these artificial benchmarks. You can see this in the `keys` test where the `fold` based implementation of `keys` is over 5x faster then `Array.from(k.keys())`
-* HAMT is the fastest choice for `fold` style, accumulation operations.
 * Mori and Immutable both can check the size of a map in constant time.
-* Native `Map` is fastest for transient operations, but `Immutable` is the best of the libraries.
+* HAMT's use of iterators for some operations results in some overhead in these artificial benchmarks. You can see this in the `keys` test where the `fold` based implementation of `keys` is faster then `Array.from(k.keys())`
+* HAMT is the fastest choice for `fold` style, accumulation operations such as sum.
+* Native `Map` is fastest for transient operations, but `Immutable` is the best of the libraries when transient operations are used only some of the time.
 
 ```
 hashtrie - 0.2.2
@@ -63,361 +63,365 @@ immutable – 3.7.6
 
 
 Get nth
-nativeObject(10)              :      4253052.60 +/- 0.30% op/s
-nativeMap(10)                 :     11978145.21 +/- 0.57% op/s
-hashtrie(10)                  :      5573374.28 +/- 0.80% op/s
-hamt(10)                      :      6146473.84 +/- 0.69% op/s
-hamt_plus(10)                 :      6416692.21 +/- 0.67% op/s
-persistent-hash-trie(10)      :      5230526.10 +/- 0.32% op/s
-mori hash_map(10)             :      1409484.55 +/- 0.50% op/s
-immutable(10)                 :      5939472.38 +/- 0.46% op/s
-nativeObject(100)             :      7119929.29 +/- 0.64% op/s
-nativeMap(100)                :     11296814.62 +/- 0.61% op/s
-hashtrie(100)                 :      5252696.74 +/- 0.63% op/s
-hamt(100)                     :      5957209.41 +/- 0.60% op/s
-hamt_plus(100)                :      6289480.94 +/- 0.27% op/s
-persistent-hash-trie(100)     :      2055257.14 +/- 0.65% op/s
-mori hash_map(100)            :      1312600.71 +/- 0.64% op/s
-immutable(100)                :      5921420.86 +/- 0.44% op/s
-nativeObject(1000)            :      6700651.49 +/- 0.48% op/s
-nativeMap(1000)               :      9258403.23 +/- 0.73% op/s
-hashtrie(1000)                :      4351803.31 +/- 0.79% op/s
-hamt(1000)                    :      5055617.18 +/- 0.79% op/s
-hamt_plus(1000)               :      3887458.28 +/- 24.72% op/s
-persistent-hash-trie(1000)    :      1153520.28 +/- 1.02% op/s
-mori hash_map(1000)           :       422172.06 +/- 3.95% op/s
-immutable(1000)               :      4833847.07 +/- 0.43% op/s
-nativeObject(10000)           :      5818477.54 +/- 0.75% op/s
-nativeMap(10000)              :      9346032.84 +/- 0.60% op/s
-hashtrie(10000)               :      3565220.09 +/- 0.93% op/s
-hamt(10000)                   :      4554267.89 +/- 0.67% op/s
-hamt_plus(10000)              :      4395466.78 +/- 0.61% op/s
-persistent-hash-trie(10000)   :       875246.36 +/- 1.15% op/s
-mori hash_map(10000)          :       373196.81 +/- 0.90% op/s
-immutable(10000)              :      4027963.33 +/- 0.74% op/s
-nativeObject(100000)          :      2456387.05 +/- 1.12% op/s
-nativeMap(100000)             :      2956341.62 +/- 6.85% op/s
-hashtrie(100000)              :      1234243.32 +/- 0.98% op/s
-hamt(100000)                  :      1303335.18 +/- 1.91% op/s
-hamt_plus(100000)             :      1205553.49 +/- 0.39% op/s
-persistent-hash-trie(100000)  :       626135.44 +/- 1.41% op/s
-mori hash_map(100000)         :       276676.89 +/- 0.94% op/s
-immutable(100000)             :       983045.00 +/- 1.27% op/s
+nativeObject(10)              :      4244614.13 +/- 0.67% op/s
+nativeMap(10)                 :     11550034.76 +/- 0.65% op/s
+hashtrie(10)                  :      6259196.86 +/- 0.75% op/s
+hamt(10)                      :      6392951.59 +/- 0.63% op/s
+hamt_plus(10)                 :      6595558.99 +/- 0.76% op/s
+persistent-hash-trie(10)      :      5740442.97 +/- 0.74% op/s
+mori hash_map(10)             :      1339155.28 +/- 0.73% op/s
+immutable(10)                 :      6330638.15 +/- 0.57% op/s
+nativeObject(100)             :      7235517.57 +/- 0.45% op/s
+nativeMap(100)                :     11406841.64 +/- 0.58% op/s
+hashtrie(100)                 :      5215029.22 +/- 0.60% op/s
+hamt(100)                     :      5966110.64 +/- 0.52% op/s
+hamt_plus(100)                :      6180967.80 +/- 0.59% op/s
+persistent-hash-trie(100)     :      1794030.36 +/- 0.72% op/s
+mori hash_map(100)            :      1295338.69 +/- 0.77% op/s
+immutable(100)                :      5793241.67 +/- 0.75% op/s
+nativeObject(1000)            :      6615643.73 +/- 0.65% op/s
+nativeMap(1000)               :      9420171.95 +/- 0.63% op/s
+hashtrie(1000)                :      4378247.20 +/- 0.68% op/s
+hamt(1000)                    :      5096009.04 +/- 0.60% op/s
+hamt_plus(1000)               :      5241124.24 +/- 0.65% op/s
+persistent-hash-trie(1000)    :      1154780.95 +/- 0.72% op/s
+mori hash_map(1000)           :       417884.71 +/- 0.74% op/s
+immutable(1000)               :      4730301.17 +/- 0.61% op/s
+nativeObject(10000)           :      5871419.79 +/- 0.63% op/s
+nativeMap(10000)              :      9416423.41 +/- 0.68% op/s
+hashtrie(10000)               :      3542214.41 +/- 1.51% op/s
+hamt(10000)                   :      4498258.58 +/- 0.76% op/s
+hamt_plus(10000)              :      4358687.70 +/- 1.02% op/s
+persistent-hash-trie(10000)   :       814323.09 +/- 2.82% op/s
+mori hash_map(10000)          :       356802.99 +/- 1.27% op/s
+immutable(10000)              :      3980087.43 +/- 1.42% op/s
+nativeObject(100000)          :      2421467.50 +/- 1.89% op/s
+nativeMap(100000)             :      3592655.91 +/- 6.55% op/s
+hashtrie(100000)              :      1138661.12 +/- 3.09% op/s
+hamt(100000)                  :      1453867.51 +/- 1.50% op/s
+hamt_plus(100000)             :      1403940.36 +/- 1.58% op/s
+persistent-hash-trie(100000)  :       648754.85 +/- 1.20% op/s
+mori hash_map(100000)         :       270413.18 +/- 1.09% op/s
+immutable(100000)             :       897906.68 +/- 2.04% op/s
 
 
 put nth
-nativeObject(10)              :        11775.31 +/- 2.19% op/s
-nativeMap(10)                 :       286715.82 +/- 17.71% op/s
-hashtrie(10)                  :      2080513.35 +/- 0.37% op/s
-hamt(10)                      :      2820867.67 +/- 0.23% op/s
-hamt_plus(10)                 :      1172749.91 +/- 0.70% op/s
-persistent-hash-trie(10)      :       106520.12 +/- 1.04% op/s
-mori hash_map(10)             :       978970.61 +/- 0.77% op/s
-immutable(10)                 :      1599821.34 +/- 0.68% op/s
-nativeObject(100)             :        14605.25 +/- 0.85% op/s
-nativeMap(100)                :        38864.38 +/- 0.25% op/s
-hashtrie(100)                 :      1048713.10 +/- 0.26% op/s
-hamt(100)                     :      1001084.61 +/- 0.56% op/s
-hamt_plus(100)                :      1038288.45 +/- 0.72% op/s
-persistent-hash-trie(100)     :        51307.29 +/- 0.40% op/s
-mori hash_map(100)            :       793172.57 +/- 0.28% op/s
-immutable(100)                :       701238.70 +/- 0.66% op/s
-nativeObject(1000)            :         1290.64 +/- 0.71% op/s
-nativeMap(1000)               :         3794.05 +/- 0.58% op/s
-hashtrie(1000)                :       790031.22 +/- 0.73% op/s
-hamt(1000)                    :       678350.76 +/- 0.31% op/s
-hamt_plus(1000)               :       829441.53 +/- 0.52% op/s
-persistent-hash-trie(1000)    :        21210.80 +/- 6.44% op/s
-mori hash_map(1000)           :       683285.07 +/- 0.61% op/s
-immutable(1000)               :       554815.50 +/- 0.42% op/s
-nativeObject(10000)           :          139.94 +/- 0.46% op/s
-nativeMap(10000)              :          328.34 +/- 0.75% op/s
-hashtrie(10000)               :       755418.89 +/- 0.72% op/s
-hamt(10000)                   :       740536.55 +/- 0.64% op/s
-hamt_plus(10000)              :       533455.69 +/- 0.44% op/s
-persistent-hash-trie(10000)   :        24807.84 +/- 0.56% op/s
-mori hash_map(10000)          :       614133.64 +/- 0.48% op/s
-immutable(10000)              :       577625.00 +/- 0.63% op/s
-nativeObject(100000)          :            9.53 +/- 15.01% op/s
-nativeMap(100000)             :           22.76 +/- 22.48% op/s
-hashtrie(100000)              :       569263.04 +/- 0.71% op/s
-hamt(100000)                  :       509578.30 +/- 0.63% op/s
-hamt_plus(100000)             :       481707.84 +/- 0.63% op/s
-persistent-hash-trie(100000)  :        12154.27 +/- 0.79% op/s
-mori hash_map(100000)         :       478009.86 +/- 0.71% op/s
-immutable(100000)             :       415332.45 +/- 0.65% op/s
+nativeObject(10)              :        12188.72 +/- 1.77% op/s
+nativeMap(10)                 :       331999.97 +/- 0.61% op/s
+hashtrie(10)                  :      1981287.81 +/- 0.57% op/s
+hamt(10)                      :      2909370.02 +/- 0.87% op/s
+hamt_plus(10)                 :      1142064.43 +/- 0.86% op/s
+persistent-hash-trie(10)      :        69990.02 +/- 7.42% op/s
+mori hash_map(10)             :       977061.84 +/- 0.91% op/s
+immutable(10)                 :      1620375.73 +/- 0.83% op/s
+nativeObject(100)             :        14323.60 +/- 0.86% op/s
+nativeMap(100)                :        36515.13 +/- 0.64% op/s
+hashtrie(100)                 :      1298556.26 +/- 0.75% op/s
+hamt(100)                     :      1218027.04 +/- 0.72% op/s
+hamt_plus(100)                :       809949.10 +/- 0.75% op/s
+persistent-hash-trie(100)     :        35055.73 +/- 1.23% op/s
+mori hash_map(100)            :       295460.35 +/- 0.76% op/s
+immutable(100)                :       829635.24 +/- 0.69% op/s
+nativeObject(1000)            :         1294.66 +/- 0.68% op/s
+nativeMap(1000)               :         3721.45 +/- 1.01% op/s
+hashtrie(1000)                :      1085484.49 +/- 0.92% op/s
+hamt(1000)                    :       756321.17 +/- 0.64% op/s
+hamt_plus(1000)               :       727956.51 +/- 0.73% op/s
+persistent-hash-trie(1000)    :        24184.32 +/- 0.98% op/s
+mori hash_map(1000)           :       546685.98 +/- 0.65% op/s
+immutable(1000)               :       673202.83 +/- 0.68% op/s
+nativeObject(10000)           :          140.73 +/- 0.79% op/s
+nativeMap(10000)              :          317.94 +/- 0.74% op/s
+hashtrie(10000)               :       730196.10 +/- 0.81% op/s
+hamt(10000)                   :       731283.05 +/- 0.74% op/s
+hamt_plus(10000)              :       525556.73 +/- 0.77% op/s
+persistent-hash-trie(10000)   :        25006.64 +/- 0.67% op/s
+mori hash_map(10000)          :       491967.26 +/- 0.74% op/s
+immutable(10000)              :       565153.79 +/- 0.78% op/s
+nativeObject(100000)          :            9.78 +/- 15.34% op/s
+nativeMap(100000)             :           22.67 +/- 22.72% op/s
+hashtrie(100000)              :       723779.21 +/- 1.01% op/s
+hamt(100000)                  :       555994.96 +/- 0.74% op/s
+hamt_plus(100000)             :       469579.05 +/- 0.78% op/s
+persistent-hash-trie(100000)  :        11703.42 +/- 0.87% op/s
+mori hash_map(100000)         :       211904.67 +/- 0.73% op/s
+immutable(100000)             :       440632.41 +/- 0.63% op/s
 
 
 Put All
-nativeObject(10)              :        24121.76 +/- 0.77% op/s
-nativeMap(10)                 :        59060.68 +/- 0.61% op/s
-hashtrie(10)                  :       202087.01 +/- 0.63% op/s
-hamt(10)                      :       312715.58 +/- 0.79% op/s
-hamt_plus(10)                 :       138573.74 +/- 0.71% op/s
-persistent-hash-trie(10)      :        18118.58 +/- 0.84% op/s
-mori hash_map(10)             :        52421.41 +/- 0.80% op/s
-immutable(10)                 :        98762.31 +/- 0.70% op/s
-nativeObject(100)             :          289.17 +/- 0.85% op/s
-nativeMap(100)                :          695.42 +/- 0.69% op/s
-hashtrie(100)                 :        12169.33 +/- 0.70% op/s
-hamt(100)                     :        12714.17 +/- 0.65% op/s
-hamt_plus(100)                :         9275.41 +/- 3.40% op/s
-persistent-hash-trie(100)     :          447.93 +/- 1.50% op/s
-mori hash_map(100)            :         6801.30 +/- 0.71% op/s
-immutable(100)                :         9521.37 +/- 0.65% op/s
-nativeObject(1000)            :            2.61 +/- 0.81% op/s
-nativeMap(1000)               :            7.73 +/- 0.85% op/s
-hashtrie(1000)                :          895.00 +/- 0.81% op/s
-hamt(1000)                    :          931.91 +/- 0.69% op/s
-hamt_plus(1000)               :          838.37 +/- 0.75% op/s
-persistent-hash-trie(1000)    :           27.57 +/- 1.10% op/s
-mori hash_map(1000)           :          172.72 +/- 0.79% op/s
-immutable(1000)               :          731.74 +/- 0.65% op/s
-nativeObject(10000)           :            0.03 +/- 0.36% op/s
-nativeMap(10000)              :            0.07 +/- 1.82% op/s
-hashtrie(10000)               :           65.74 +/- 0.98% op/s
-hamt(10000)                   :           64.92 +/- 0.98% op/s
-hamt_plus(10000)              :           60.81 +/- 0.94% op/s
-persistent-hash-trie(10000)   :            1.51 +/- 3.07% op/s
-mori hash_map(10000)          :           18.16 +/- 2.17% op/s
-immutable(10000)              :           53.63 +/- 0.78% op/s
+nativeObject(10)              :        24096.22 +/- 0.76% op/s
+nativeMap(10)                 :        55504.92 +/- 0.78% op/s
+hashtrie(10)                  :       199877.94 +/- 0.77% op/s
+hamt(10)                      :       326668.97 +/- 0.76% op/s
+hamt_plus(10)                 :       147879.54 +/- 0.68% op/s
+persistent-hash-trie(10)      :        17722.57 +/- 0.77% op/s
+mori hash_map(10)             :        62614.65 +/- 0.69% op/s
+immutable(10)                 :       102376.23 +/- 0.67% op/s
+nativeObject(100)             :          293.75 +/- 0.85% op/s
+nativeMap(100)                :          722.70 +/- 0.68% op/s
+hashtrie(100)                 :        12576.32 +/- 0.73% op/s
+hamt(100)                     :        12809.32 +/- 0.69% op/s
+hamt_plus(100)                :        10640.77 +/- 0.70% op/s
+persistent-hash-trie(100)     :          497.63 +/- 1.14% op/s
+mori hash_map(100)            :         6104.23 +/- 0.75% op/s
+immutable(100)                :         8612.06 +/- 0.71% op/s
+nativeObject(1000)            :            2.62 +/- 0.93% op/s
+nativeMap(1000)               :            7.37 +/- 0.91% op/s
+hashtrie(1000)                :          887.84 +/- 0.76% op/s
+hamt(1000)                    :          890.31 +/- 1.27% op/s
+hamt_plus(1000)               :          738.35 +/- 7.55% op/s
+persistent-hash-trie(1000)    :           28.75 +/- 1.03% op/s
+mori hash_map(1000)           :          162.59 +/- 1.70% op/s
+immutable(1000)               :          742.96 +/- 0.75% op/s
+nativeObject(10000)           :            0.03 +/- 1.21% op/s
+nativeMap(10000)              :            0.07 +/- 0.47% op/s
+hashtrie(10000)               :           66.83 +/- 1.33% op/s
+hamt(10000)                   :           66.49 +/- 2.04% op/s
+hamt_plus(10000)              :           56.05 +/- 1.12% op/s
+persistent-hash-trie(10000)   :            1.51 +/- 4.53% op/s
+mori hash_map(10000)          :           17.94 +/- 2.02% op/s
+immutable(10000)              :           54.67 +/- 1.38% op/s
 
 
 Put All (transient)
-nativeObject(10)              :       163523.74 +/- 0.63% op/s
-nativeMap(10)                 :       608177.08 +/- 0.63% op/s
-hamt(10)                      :       461306.27 +/- 1.05% op/s
-hamt_plus(10)                 :       243703.38 +/- 0.58% op/s
-mori hash_map(10)             :        63491.33 +/- 1.49% op/s
-immutable(10)                 :       127369.46 +/- 0.71% op/s
-nativeObject(100)             :        22152.25 +/- 1.30% op/s
-nativeMap(100)                :        78460.96 +/- 1.60% op/s
-hamt(100)                     :        14608.90 +/- 0.44% op/s
-hamt_plus(100)                :        22454.26 +/- 1.12% op/s
-mori hash_map(100)            :         9830.21 +/- 1.76% op/s
-immutable(100)                :        26108.90 +/- 0.58% op/s
-nativeObject(1000)            :         1726.92 +/- 1.64% op/s
-nativeMap(1000)               :         8583.67 +/- 1.74% op/s
-hamt(1000)                    :          992.00 +/- 0.59% op/s
-hamt_plus(1000)               :         2038.60 +/- 0.52% op/s
-mori hash_map(1000)           :          196.89 +/- 2.14% op/s
-immutable(1000)               :         2509.50 +/- 0.53% op/s
-nativeObject(10000)           :          182.81 +/- 1.11% op/s
-nativeMap(10000)              :          644.87 +/- 0.78% op/s
-hamt(10000)                   :           75.29 +/- 0.79% op/s
-hamt_plus(10000)              :          165.30 +/- 1.91% op/s
-mori hash_map(10000)          :           22.44 +/- 3.26% op/s
-immutable(10000)              :          236.08 +/- 1.67% op/s
+nativeObject(10)              :       170075.79 +/- 0.72% op/s
+nativeMap(10)                 :       580557.74 +/- 0.72% op/s
+hamt(10)                      :       458300.23 +/- 2.39% op/s
+hamt_plus(10)                 :       224704.12 +/- 0.65% op/s
+mori hash_map(10)             :        77671.83 +/- 0.76% op/s
+immutable(10)                 :       136031.46 +/- 0.65% op/s
+nativeObject(100)             :        22401.14 +/- 1.45% op/s
+nativeMap(100)                :        76827.18 +/- 0.58% op/s
+hamt(100)                     :        15057.84 +/- 0.90% op/s
+hamt_plus(100)                :        21805.50 +/- 2.06% op/s
+mori hash_map(100)            :        10766.87 +/- 0.95% op/s
+immutable(100)                :        26326.59 +/- 0.70% op/s
+nativeObject(1000)            :         1723.97 +/- 2.07% op/s
+nativeMap(1000)               :         8569.10 +/- 0.72% op/s
+hamt(1000)                    :         1007.50 +/- 0.85% op/s
+hamt_plus(1000)               :         1997.42 +/- 0.72% op/s
+mori hash_map(1000)           :          203.78 +/- 2.46% op/s
+immutable(1000)               :         2611.57 +/- 1.33% op/s
+nativeObject(10000)           :          188.34 +/- 1.05% op/s
+nativeMap(10000)              :          640.56 +/- 0.92% op/s
+hamt(10000)                   :           80.68 +/- 1.21% op/s
+hamt_plus(10000)              :          167.09 +/- 1.03% op/s
+mori hash_map(10000)          :           22.96 +/- 3.59% op/s
+immutable(10000)              :          259.54 +/- 0.90% op/s
 
 
 remove nth
-nativeObject(10)              :       135515.42 +/- 6.13% op/s
-nativeMap(10)                 :       303834.10 +/- 0.71% op/s
-hashtrie(10)                  :      1281720.52 +/- 0.69% op/s
-hamt(10)                      :      2719631.17 +/- 0.63% op/s
-hamt_plus(10)                 :      1202088.32 +/- 0.80% op/s
-persistent-hash-trie(10)      :        57857.09 +/- 0.74% op/s
-mori hash_map(10)             :       991622.07 +/- 1.44% op/s
-immutable(10)                 :      1220953.79 +/- 0.61% op/s
-nativeObject(100)             :         4784.32 +/- 0.86% op/s
-nativeMap(100)                :        36972.76 +/- 0.72% op/s
-hashtrie(100)                 :      1011539.86 +/- 6.62% op/s
-hamt(100)                     :      1073100.89 +/- 0.62% op/s
-hamt_plus(100)                :       895285.83 +/- 0.73% op/s
-persistent-hash-trie(100)     :        25164.68 +/- 0.71% op/s
-mori hash_map(100)            :       796652.34 +/- 0.61% op/s
-immutable(100)                :       766668.37 +/- 0.67% op/s
-nativeObject(1000)            :         1165.27 +/- 0.66% op/s
-nativeMap(1000)               :         3862.06 +/- 0.69% op/s
-hashtrie(1000)                :       817906.48 +/- 0.66% op/s
-hamt(1000)                    :       668192.89 +/- 0.60% op/s
-hamt_plus(1000)               :       833067.81 +/- 0.63% op/s
-persistent-hash-trie(1000)    :        17461.83 +/- 0.75% op/s
-mori hash_map(1000)           :       281439.48 +/- 0.71% op/s
-immutable(1000)               :       512717.43 +/- 3.78% op/s
-nativeObject(10000)           :          138.18 +/- 0.68% op/s
-nativeMap(10000)              :          318.56 +/- 0.66% op/s
-hashtrie(10000)               :       587930.44 +/- 1.05% op/s
-hamt(10000)                   :       558592.83 +/- 0.85% op/s
-hamt_plus(10000)              :       561734.19 +/- 0.95% op/s
-persistent-hash-trie(10000)   :         9323.36 +/- 0.83% op/s
-mori hash_map(10000)          :       234261.74 +/- 0.71% op/s
-immutable(10000)              :       431934.95 +/- 1.07% op/s
-nativeObject(100000)          :            9.34 +/- 10.57% op/s
-nativeMap(100000)             :           21.81 +/- 18.05% op/s
-hashtrie(100000)              :       389462.68 +/- 0.83% op/s
-hamt(100000)                  :       338076.86 +/- 0.70% op/s
-hamt_plus(100000)             :       381846.14 +/- 0.73% op/s
-persistent-hash-trie(100000)  :         3866.86 +/- 0.69% op/s
-mori hash_map(100000)         :       191825.49 +/- 0.68% op/s
-immutable(100000)             :       289282.80 +/- 0.78% op/s
+nativeObject(10)              :       152844.80 +/- 0.69% op/s
+nativeMap(10)                 :       296357.85 +/- 0.61% op/s
+hashtrie(10)                  :      1406614.60 +/- 0.66% op/s
+hamt(10)                      :      3250861.77 +/- 0.65% op/s
+hamt_plus(10)                 :      1358458.49 +/- 0.66% op/s
+persistent-hash-trie(10)      :        73465.37 +/- 0.66% op/s
+mori hash_map(10)             :       926927.13 +/- 0.98% op/s
+immutable(10)                 :      1444830.65 +/- 0.63% op/s
+nativeObject(100)             :         4674.10 +/- 5.11% op/s
+nativeMap(100)                :        37343.08 +/- 0.60% op/s
+hashtrie(100)                 :      1075502.07 +/- 0.71% op/s
+hamt(100)                     :      1261225.61 +/- 0.75% op/s
+hamt_plus(100)                :       864867.27 +/- 0.70% op/s
+persistent-hash-trie(100)     :        25370.19 +/- 0.69% op/s
+mori hash_map(100)            :       697118.62 +/- 0.63% op/s
+immutable(100)                :       801686.93 +/- 3.74% op/s
+nativeObject(1000)            :         1160.72 +/- 2.21% op/s
+nativeMap(1000)               :         3789.61 +/- 0.73% op/s
+hashtrie(1000)                :       828952.87 +/- 0.61% op/s
+hamt(1000)                    :       788532.21 +/- 0.76% op/s
+hamt_plus(1000)               :       762223.23 +/- 0.72% op/s
+persistent-hash-trie(1000)    :        18067.70 +/- 0.85% op/s
+mori hash_map(1000)           :       256459.19 +/- 0.68% op/s
+immutable(1000)               :       593249.90 +/- 0.78% op/s
+nativeObject(10000)           :          138.46 +/- 0.86% op/s
+nativeMap(10000)              :          319.25 +/- 0.78% op/s
+hashtrie(10000)               :       594162.57 +/- 1.44% op/s
+hamt(10000)                   :       629565.58 +/- 1.67% op/s
+hamt_plus(10000)              :       476888.15 +/- 1.47% op/s
+persistent-hash-trie(10000)   :         9364.66 +/- 0.82% op/s
+mori hash_map(10000)          :       214650.08 +/- 0.97% op/s
+immutable(10000)              :       464763.04 +/- 1.64% op/s
+nativeObject(100000)          :            9.93 +/- 5.83% op/s
+nativeMap(100000)             :           21.68 +/- 16.94% op/s
+hashtrie(100000)              :       397632.16 +/- 1.29% op/s
+hamt(100000)                  :       383705.36 +/- 1.15% op/s
+hamt_plus(100000)             :       322378.26 +/- 1.31% op/s
+persistent-hash-trie(100000)  :         3901.06 +/- 0.72% op/s
+mori hash_map(100000)         :       158276.06 +/- 0.90% op/s
+immutable(100000)             :       305832.44 +/- 1.00% op/s
 
 
 Remove All
-nativeObject(10)              :         4077.08 +/- 35.95% op/s
-nativeMap(10)                 :        30411.13 +/- 0.68% op/s
-hashtrie(10)                  :       185313.34 +/- 0.65% op/s
-hamt(10)                      :       416300.99 +/- 0.63% op/s
-hamt_plus(10)                 :       149532.61 +/- 0.76% op/s
-persistent-hash-trie(10)      :        15114.24 +/- 0.66% op/s
-mori hash_map(10)             :       107297.83 +/- 0.72% op/s
-immutable(10)                 :       181231.67 +/- 0.66% op/s
-nativeObject(100)             :          148.64 +/- 0.89% op/s
-nativeMap(100)                :          370.10 +/- 0.69% op/s
-hashtrie(100)                 :        11712.46 +/- 0.57% op/s
-hamt(100)                     :        13187.75 +/- 0.69% op/s
-hamt_plus(100)                :        12164.46 +/- 0.63% op/s
-persistent-hash-trie(100)     :         1093.18 +/- 0.59% op/s
-mori hash_map(100)            :         7660.88 +/- 0.64% op/s
-immutable(100)                :         8825.08 +/- 0.67% op/s
-nativeObject(1000)            :            1.30 +/- 1.36% op/s
-nativeMap(1000)               :            3.84 +/- 1.14% op/s
-hashtrie(1000)                :          825.10 +/- 0.77% op/s
-hamt(1000)                    :          743.02 +/- 0.69% op/s
-hamt_plus(1000)               :          887.76 +/- 0.63% op/s
-persistent-hash-trie(1000)    :          604.18 +/- 0.62% op/s
-mori hash_map(1000)           :          262.81 +/- 0.58% op/s
-immutable(1000)               :          654.07 +/- 0.75% op/s
-nativeObject(10000)           :            0.01 +/- 0.45% op/s
-nativeMap(10000)              :            0.03 +/- 0.24% op/s
-hashtrie(10000)               :           58.86 +/- 1.45% op/s
-hamt(10000)                   :           57.43 +/- 1.09% op/s
-hamt_plus(10000)              :           65.73 +/- 1.20% op/s
-persistent-hash-trie(10000)   :          254.01 +/- 1.72% op/s
-mori hash_map(10000)          :           23.51 +/- 0.99% op/s
-immutable(10000)              :           48.56 +/- 1.27% op/s
+nativeObject(10)              :         1195.85 +/- 7.98% op/s
+nativeMap(10)                 :        27796.94 +/- 0.60% op/s
+hashtrie(10)                  :       176966.49 +/- 0.83% op/s
+hamt(10)                      :       447706.85 +/- 0.65% op/s
+hamt_plus(10)                 :       152762.77 +/- 0.70% op/s
+persistent-hash-trie(10)      :        11506.40 +/- 0.57% op/s
+mori hash_map(10)             :        91547.29 +/- 0.58% op/s
+immutable(10)                 :       178219.04 +/- 0.67% op/s
+nativeObject(100)             :          152.77 +/- 0.88% op/s
+nativeMap(100)                :          370.46 +/- 0.73% op/s
+hashtrie(100)                 :        11154.41 +/- 0.71% op/s
+hamt(100)                     :        14750.23 +/- 0.74% op/s
+hamt_plus(100)                :        12251.21 +/- 0.69% op/s
+persistent-hash-trie(100)     :         1305.89 +/- 0.70% op/s
+mori hash_map(100)            :         6676.98 +/- 0.69% op/s
+immutable(100)                :         8933.95 +/- 0.77% op/s
+nativeObject(1000)            :            1.29 +/- 1.45% op/s
+nativeMap(1000)               :            3.84 +/- 0.87% op/s
+hashtrie(1000)                :          813.70 +/- 0.73% op/s
+hamt(1000)                    :          863.18 +/- 0.84% op/s
+hamt_plus(1000)               :          907.38 +/- 0.69% op/s
+persistent-hash-trie(1000)    :          604.92 +/- 0.68% op/s
+mori hash_map(1000)           :          243.29 +/- 0.84% op/s
+immutable(1000)               :          646.07 +/- 0.89% op/s
+nativeObject(10000)           :            0.01 +/- 0.41% op/s
+nativeMap(10000)              :            0.03 +/- 0.34% op/s
+hashtrie(10000)               :           60.64 +/- 1.33% op/s
+hamt(10000)                   :           65.91 +/- 1.23% op/s
+hamt_plus(10000)              :           66.73 +/- 1.09% op/s
+persistent-hash-trie(10000)   :          249.61 +/- 0.75% op/s
+mori hash_map(10000)          :           21.87 +/- 3.41% op/s
+immutable(10000)              :           48.96 +/- 1.43% op/s
 
 
 Remove All (transient)
-nativeObject(10)              :       202226.79 +/- 0.69% op/s
-nativeMap(10)                 :       279874.63 +/- 0.61% op/s
-hamt(10)                      :       415829.37 +/- 0.70% op/s
-hamt_plus(10)                 :       223249.95 +/- 0.64% op/s
-mori hash_map(10)             :        65191.95 +/- 0.82% op/s
-immutable(10)                 :       349090.33 +/- 0.68% op/s
-nativeObject(100)             :        12953.89 +/- 0.73% op/s
-nativeMap(100)                :        30085.83 +/- 0.72% op/s
-hamt(100)                     :        13094.23 +/- 0.61% op/s
-hamt_plus(100)                :        22265.22 +/- 0.59% op/s
-mori hash_map(100)            :         6606.22 +/- 0.70% op/s
-immutable(100)                :        33461.26 +/- 0.92% op/s
-nativeObject(1000)            :         1148.58 +/- 0.84% op/s
-nativeMap(1000)               :         3011.51 +/- 0.88% op/s
-hamt(1000)                    :          772.48 +/- 0.66% op/s
-hamt_plus(1000)               :         2338.81 +/- 0.69% op/s
-mori hash_map(1000)           :          277.73 +/- 0.69% op/s
-immutable(1000)               :         2988.65 +/- 1.43% op/s
-nativeObject(10000)           :          122.85 +/- 0.68% op/s
-nativeMap(10000)              :          262.51 +/- 2.37% op/s
-hamt(10000)                   :           56.58 +/- 1.09% op/s
-hamt_plus(10000)              :          155.52 +/- 1.31% op/s
-mori hash_map(10000)          :           25.56 +/- 1.34% op/s
-immutable(10000)              :          226.46 +/- 1.84% op/s
+nativeObject(10)              :       195068.70 +/- 2.26% op/s
+nativeMap(10)                 :       266108.45 +/- 0.55% op/s
+hamt(10)                      :       432945.00 +/- 0.77% op/s
+hamt_plus(10)                 :       227209.22 +/- 0.59% op/s
+mori hash_map(10)             :        66741.77 +/- 0.81% op/s
+immutable(10)                 :       310472.08 +/- 0.65% op/s
+nativeObject(100)             :        13179.44 +/- 0.77% op/s
+nativeMap(100)                :        30743.02 +/- 0.66% op/s
+hamt(100)                     :        14848.09 +/- 0.58% op/s
+hamt_plus(100)                :        22891.13 +/- 0.67% op/s
+mori hash_map(100)            :         6405.14 +/- 0.82% op/s
+immutable(100)                :        29254.60 +/- 0.69% op/s
+nativeObject(1000)            :         1146.11 +/- 1.29% op/s
+nativeMap(1000)               :         3078.53 +/- 0.81% op/s
+hamt(1000)                    :          901.94 +/- 0.64% op/s
+hamt_plus(1000)               :         2606.26 +/- 0.64% op/s
+mori hash_map(1000)           :          268.88 +/- 2.50% op/s
+immutable(1000)               :         2679.88 +/- 0.57% op/s
+nativeObject(10000)           :          124.30 +/- 2.00% op/s
+nativeMap(10000)              :          271.99 +/- 0.62% op/s
+hamt(10000)                   :           66.13 +/- 1.41% op/s
+hamt_plus(10000)              :          171.87 +/- 1.01% op/s
+mori hash_map(10000)          :           24.59 +/- 1.94% op/s
+immutable(10000)              :          195.72 +/- 1.74% op/s
 
 
 Count
-nativeObject(10)              :      2599556.68 +/- 1.04% op/s
-nativeMap(10)                 :     33367889.77 +/- 7.06% op/s
-hashtrie(10)                  :      1162619.46 +/- 0.78% op/s
-hamt(10)                      :      6951582.15 +/- 0.79% op/s
-hamt_plus(10)                 :      4733164.96 +/- 0.66% op/s
-persistent-hash-trie(10)      :        89865.96 +/- 0.77% op/s
-mori hash_map(10)             :     40354388.13 +/- 0.80% op/s
-immutable(10)                 :     45008356.70 +/- 0.71% op/s
-nativeObject(100)             :        86870.90 +/- 0.66% op/s
-nativeMap(100)                :     35936236.83 +/- 0.78% op/s
+nativeObject(10)              :      2572133.72 +/- 1.21% op/s
+nativeMap(10)                 :     33179551.72 +/- 1.06% op/s
+hashtrie(10)                  :      2348630.72 +/- 0.54% op/s
+hamt(10)                      :      7694811.71 +/- 1.21% op/s
+hamt_plus(10)                 :      5261948.67 +/- 0.85% op/s
+persistent-hash-trie(10)      :        84592.56 +/- 0.66% op/s
+mori hash_map(10)             :     31297544.78 +/- 1.01% op/s
+immutable(10)                 :     35010254.40 +/- 0.95% op/s
+nativeObject(100)             :        91733.82 +/- 0.60% op/s
+nativeMap(100)                :     28858965.00 +/- 0.91% op/s
 hashtrie(100)                 :            0.00 +/- 0.00% op/s
-hamt(100)                     :       599885.39 +/- 0.81% op/s
-hamt_plus(100)                :       408006.07 +/- 0.72% op/s
-persistent-hash-trie(100)     :         5441.06 +/- 0.74% op/s
-mori hash_map(100)            :     41595139.52 +/- 0.85% op/s
-immutable(100)                :     47578044.52 +/- 0.77% op/s
-nativeObject(1000)            :         5869.84 +/- 0.79% op/s
-nativeMap(1000)               :     37076686.82 +/- 0.78% op/s
+hamt(100)                     :       615089.40 +/- 0.64% op/s
+hamt_plus(100)                :       374596.43 +/- 0.73% op/s
+persistent-hash-trie(100)     :         6213.41 +/- 1.44% op/s
+mori hash_map(100)            :     31960853.49 +/- 0.71% op/s
+immutable(100)                :     34913612.53 +/- 0.87% op/s
+nativeObject(1000)            :         5958.83 +/- 0.56% op/s
+nativeMap(1000)               :     28129176.58 +/- 1.25% op/s
 hashtrie(1000)                :            0.00 +/- 0.00% op/s
-hamt(1000)                    :        34566.52 +/- 0.66% op/s
-hamt_plus(1000)               :        26275.26 +/- 0.65% op/s
-persistent-hash-trie(1000)    :          601.33 +/- 0.77% op/s
-mori hash_map(1000)           :     40296498.98 +/- 0.79% op/s
-immutable(1000)               :     46374119.93 +/- 0.88% op/s
-nativeObject(10000)           :          582.07 +/- 0.76% op/s
-nativeMap(10000)              :     33573514.46 +/- 0.72% op/s
+hamt(1000)                    :        35145.13 +/- 0.63% op/s
+hamt_plus(1000)               :        23552.18 +/- 5.24% op/s
+persistent-hash-trie(1000)    :          608.11 +/- 4.30% op/s
+mori hash_map(1000)           :     31707550.00 +/- 0.65% op/s
+immutable(1000)               :     35013475.87 +/- 0.97% op/s
+nativeObject(10000)           :          578.81 +/- 0.70% op/s
+nativeMap(10000)              :     28810775.76 +/- 1.00% op/s
 hashtrie(10000)               :            0.00 +/- 0.00% op/s
-hamt(10000)                   :         6334.22 +/- 0.71% op/s
-hamt_plus(10000)              :         4496.72 +/- 0.66% op/s
-persistent-hash-trie(10000)   :           75.00 +/- 1.24% op/s
-mori hash_map(10000)          :     40894855.38 +/- 1.02% op/s
-immutable(10000)              :     43638605.69 +/- 1.00% op/s
+hamt(10000)                   :         6208.90 +/- 0.68% op/s
+hamt_plus(10000)              :         4319.71 +/- 0.57% op/s
+persistent-hash-trie(10000)   :           76.88 +/- 1.42% op/s
+mori hash_map(10000)          :     32223960.01 +/- 0.83% op/s
+immutable(10000)              :     33671601.29 +/- 0.95% op/s
 
 
 Sum
-nativeObject(10)              :       701258.92 +/- 0.87% op/s
-nativeMap(10)                 :      1125594.93 +/- 0.75% op/s
-hashtrie(10)                  :       766056.89 +/- 0.70% op/s
-hamt(10)                      :      3491912.99 +/- 0.68% op/s
-hamt_plus(10)                 :      3458129.00 +/- 0.76% op/s
-persistent-hash-trie(10)      :        96123.36 +/- 1.67% op/s
-mori hash_map(10)             :      2471781.34 +/- 0.66% op/s
-immutable(10)                 :      1380830.45 +/- 1.04% op/s
-nativeObject(100)             :        30120.66 +/- 0.80% op/s
-nativeMap(100)                :       139025.28 +/- 2.25% op/s
+nativeObject(10)              :       715484.73 +/- 0.98% op/s
+nativeMap(10)                 :      1031856.47 +/- 5.47% op/s
+hashtrie(10)                  :            0.00 +/- 0.00% op/s
+hamt(10)                      :      3088189.06 +/- 0.76% op/s
+hamt_plus(10)                 :      2963602.83 +/- 0.79% op/s
+persistent-hash-trie(10)      :       103579.96 +/- 0.63% op/s
+mori hash_map(10)             :      1586979.34 +/- 0.77% op/s
+immutable(10)                 :       852788.15 +/- 1.92% op/s
+nativeObject(100)             :        26872.24 +/- 8.13% op/s
+nativeMap(100)                :       132776.25 +/- 0.60% op/s
 hashtrie(100)                 :            0.00 +/- 0.00% op/s
-hamt(100)                     :       296188.67 +/- 0.87% op/s
-hamt_plus(100)                :       317830.40 +/- 0.69% op/s
-persistent-hash-trie(100)     :         4942.36 +/- 0.83% op/s
-mori hash_map(100)            :       240115.32 +/- 0.73% op/s
-immutable(100)                :       134908.97 +/- 6.75% op/s
-nativeObject(1000)            :         2533.66 +/- 0.79% op/s
-nativeMap(1000)               :        13230.34 +/- 0.78% op/s
+hamt(100)                     :       306662.96 +/- 0.77% op/s
+hamt_plus(100)                :       331425.65 +/- 0.68% op/s
+persistent-hash-trie(100)     :         5671.65 +/- 1.13% op/s
+mori hash_map(100)            :       207902.99 +/- 0.92% op/s
+immutable(100)                :        95914.06 +/- 0.66% op/s
+nativeObject(1000)            :         2542.72 +/- 0.66% op/s
+nativeMap(1000)               :        13424.49 +/- 0.71% op/s
 hashtrie(1000)                :            0.00 +/- 0.00% op/s
-hamt(1000)                    :        23994.08 +/- 0.65% op/s
-hamt_plus(1000)               :        22522.33 +/- 0.66% op/s
-persistent-hash-trie(1000)    :          580.87 +/- 1.09% op/s
-mori hash_map(1000)           :        17017.40 +/- 0.70% op/s
-immutable(1000)               :         9122.90 +/- 0.70% op/s
-nativeObject(10000)           :          228.77 +/- 0.74% op/s
-nativeMap(10000)              :         1321.12 +/- 0.60% op/s
+hamt(1000)                    :        23758.97 +/- 0.66% op/s
+hamt_plus(1000)               :        22280.73 +/- 0.66% op/s
+persistent-hash-trie(1000)    :          622.50 +/- 1.14% op/s
+mori hash_map(1000)           :        15766.31 +/- 0.59% op/s
+immutable(1000)               :         8913.11 +/- 0.75% op/s
+nativeObject(10000)           :          237.73 +/- 1.55% op/s
+nativeMap(10000)              :         1326.68 +/- 0.60% op/s
 hashtrie(10000)               :            0.00 +/- 0.00% op/s
-hamt(10000)                   :         3368.35 +/- 0.76% op/s
-hamt_plus(10000)              :         3508.38 +/- 0.71% op/s
-persistent-hash-trie(10000)   :           69.25 +/- 2.10% op/s
-mori hash_map(10000)          :         2400.83 +/- 0.69% op/s
-immutable(10000)              :          953.48 +/- 0.65% op/s
+hamt(10000)                   :         3369.52 +/- 0.65% op/s
+hamt_plus(10000)              :         3428.84 +/- 0.72% op/s
+persistent-hash-trie(10000)   :           72.21 +/- 3.32% op/s
+mori hash_map(10000)          :         1859.67 +/- 0.58% op/s
+immutable(10000)              :          978.65 +/- 0.58% op/s
 
 
 Keys
-nativeObject(10)              :      2226171.78 +/- 0.84% op/s
-nativeMap(10)                 :       276124.34 +/- 0.66% op/s
-hashtrie(10)                  :       729935.55 +/- 0.68% op/s
-hamt(10)                      :       283275.46 +/- 0.95% op/s
-hamt_plus(10)                 :      2661858.04 +/- 0.74% op/s
-persistent-hash-trie(10)      :        93829.99 +/- 1.44% op/s
-mori hash_map(10)             :       308327.35 +/- 0.84% op/s
-immutable(10)                 :       188018.68 +/- 4.11% op/s
-nativeObject(100)             :        90201.29 +/- 0.84% op/s
-nativeMap(100)                :        31810.74 +/- 0.67% op/s
+nativeObject(10)              :      2296405.25 +/- 0.83% op/s
+nativeMap(10)                 :       265310.45 +/- 0.64% op/s
+hashtrie(10)                  :      1162994.54 +/- 0.56% op/s
+hamt(10)                      :       295463.86 +/- 0.69% op/s
+hamt fold impl(10)            :      3050066.22 +/- 2.30% op/s
+hamt_plus(10)                 :      2568942.58 +/- 0.62% op/s
+persistent-hash-trie(10)      :       102697.13 +/- 0.69% op/s
+mori hash_map(10)             :       428431.16 +/- 0.84% op/s
+immutable(10)                 :       184061.92 +/- 4.50% op/s
+nativeObject(100)             :        88605.43 +/- 0.68% op/s
+nativeMap(100)                :        32159.25 +/- 0.66% op/s
 hashtrie(100)                 :            0.00 +/- 0.00% op/s
-hamt(100)                     :        30539.74 +/- 2.54% op/s
-hamt_plus(100)                :       217806.98 +/- 0.69% op/s
-persistent-hash-trie(100)     :         6189.47 +/- 0.71% op/s
-mori hash_map(100)            :        33092.96 +/- 0.65% op/s
-immutable(100)                :        43055.84 +/- 1.55% op/s
-nativeObject(1000)            :         5781.90 +/- 0.82% op/s
-nativeMap(1000)               :         3183.31 +/- 2.72% op/s
+hamt(100)                     :        31023.78 +/- 0.69% op/s
+hamt fold impl(100)           :        61883.38 +/- 0.61% op/s
+hamt_plus(100)                :       204788.60 +/- 0.71% op/s
+persistent-hash-trie(100)     :         6039.71 +/- 0.52% op/s
+mori hash_map(100)            :        31624.50 +/- 0.62% op/s
+immutable(100)                :        43001.94 +/- 1.51% op/s
+nativeObject(1000)            :         5732.22 +/- 1.85% op/s
+nativeMap(1000)               :         3245.09 +/- 0.72% op/s
 hashtrie(1000)                :            0.00 +/- 0.00% op/s
-hamt(1000)                    :         2960.72 +/- 0.67% op/s
-hamt_plus(1000)               :        15948.58 +/- 0.80% op/s
-persistent-hash-trie(1000)    :          589.35 +/- 0.69% op/s
-mori hash_map(1000)           :         2582.30 +/- 0.57% op/s
-immutable(1000)               :         4809.25 +/- 2.66% op/s
-nativeObject(10000)           :          565.76 +/- 2.16% op/s
-nativeMap(10000)              :          313.75 +/- 0.70% op/s
+hamt(1000)                    :         3099.23 +/- 0.65% op/s
+hamt fold impl(1000)          :         6040.15 +/- 0.67% op/s
+hamt_plus(1000)               :        16130.99 +/- 0.71% op/s
+persistent-hash-trie(1000)    :          623.74 +/- 0.67% op/s
+mori hash_map(1000)           :         2466.72 +/- 0.66% op/s
+immutable(1000)               :         4986.25 +/- 0.66% op/s
+nativeObject(10000)           :          585.79 +/- 0.70% op/s
+nativeMap(10000)              :          303.78 +/- 0.68% op/s
 hashtrie(10000)               :            0.00 +/- 0.00% op/s
-hamt(10000)                   :          301.78 +/- 1.36% op/s
-hamt_plus(10000)              :         1987.93 +/- 0.71% op/s
-persistent-hash-trie(10000)   :           72.21 +/- 2.19% op/s
-mori hash_map(10000)          :          217.11 +/- 1.16% op/s
-immutable(10000)              :          499.08 +/- 0.88% op/s
+hamt(10000)                   :          312.65 +/- 1.51% op/s
+hamt fold impl(10000)         :          655.57 +/- 0.73% op/s
+hamt_plus(10000)              :         2034.07 +/- 0.85% op/s
+persistent-hash-trie(10000)   :           76.82 +/- 0.99% op/s
+mori hash_map(10000)          :          222.55 +/- 1.05% op/s
+immutable(10000)              :          516.06 +/- 0.70% op/s
 ```
 
 

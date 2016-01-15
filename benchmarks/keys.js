@@ -41,9 +41,10 @@ var hamtKeys = function(keys) {
     };
 };
 
+
+var build = function(p, _, k) { p.push(k); return p; };
 var hamtKeysUsingFold = function(keys) {
     var h = api.hamtFrom(keys);
-    var build = function(p, _, k) { p.push(k); return p; }
     
     return function() {
         hamt.fold(build, [], h);
@@ -96,7 +97,7 @@ module.exports = function(sizes) {
             .add('hamt(' + size + ')',
                 hamtKeys(keys))
                 
-            .add('hamt fold implementation(' + size + ')',
+            .add('hamt fold impl(' + size + ')',
                 hamtKeysUsingFold(keys))
                 
             .add('hamt_plus(' + size + ')',
