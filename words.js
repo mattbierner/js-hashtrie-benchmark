@@ -1,4 +1,3 @@
-
 /**
  * Generate an array of `count` random strings between length (wl / 2, `wl`].
  */

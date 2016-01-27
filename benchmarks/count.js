@@ -14,49 +14,49 @@ module.exports = {
     benchmarks: {}
 };
 
-module.exports.benchmarks['Native Object'] = function(keys) {
+module.exports.benchmarks['Native Object'] = keys => {
     const h = api.nativeObjectFrom(keys);
     return function() {
         Object.keys(h).length;
     }
 };
 
-module.exports.benchmarks['Native Map'] = function(keys) {
+module.exports.benchmarks['Native Map'] = keys => {
     const h = api.nativeMapFrom(keys);
     return function() {
         h.size;
     };
 };
 
-module.exports.benchmarks['Hashtrie'] = function(keys) {
+module.exports.benchmarks['Hashtrie'] = keys => {
     const h = api.hashtrieFrom(keys);
     return function() {
         ht.count(h);
     };
 };
 
-module.exports.benchmarks['Hamt'] = function(keys) {
+module.exports.benchmarks['Hamt'] = keys => {
     const h = api.hamtFrom(keys);
     return function() {
         hamt.count(h);
     };
 };
 
-module.exports.benchmarks['Hamt+'] = function(keys) {
+module.exports.benchmarks['Hamt+'] = keys => {
     const h = api.hamtPlusFrom(keys);
     return function() {
         hamt_plus.count(h);
     };
 };
 
-module.exports.benchmarks['Mori'] = function(keys) {
+module.exports.benchmarks['Mori'] = keys => {
     const h = api.moriFrom(keys);
     return function() {
         mori.count(h);
     };
 };
 
-module.exports.benchmarks['Immutable'] = function(keys) {
+module.exports.benchmarks['Immutable'] = keys => {
     const h = api.immutableFrom(keys);
     return function() {
         h.count();

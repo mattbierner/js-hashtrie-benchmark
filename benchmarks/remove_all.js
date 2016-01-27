@@ -1,11 +1,11 @@
 "use strict";
-var ht = require('hashtrie');
-var hamt = require('hamt');
-var hamt_plus = require('hamt_plus');
-var mori = require('mori');
-var immutable = require('immutable');
+const ht = require('hashtrie');
+const hamt = require('hamt');
+const hamt_plus = require('hamt_plus');
+const mori = require('mori');
+const immutable = require('immutable');
 
-var api = require('../shared');
+const api = require('../shared');
 
 module.exports = {
     name: 'Remove N',
@@ -15,10 +15,10 @@ module.exports = {
 };
 
 module.exports.benchmarks['Native Object'] = function(keys, order) {
-  var h = api.nativeObjectFrom(keys);
+  const h = api.nativeObjectFrom(keys);
   return function() {
-    var c = h;
-    for(var i = 0, len = order.length; i < len; ++i) {
+    const c = h;
+    for(const i = 0, len = order.length; i < len; ++i) {
       c = Object.assign({}, c);
       delete c[order[i]];
     }
@@ -26,10 +26,10 @@ module.exports.benchmarks['Native Object'] = function(keys, order) {
 };
 
 module.exports.benchmarks['Native Map'] = function(keys, order) {
-  var h = api.nativeMapFrom(keys);
+  const h = api.nativeMapFrom(keys);
   return function() {
-    var c = h;
-    for(var i = 0, len = order.length; i < len; ++i) {
+    const c = h;
+    for(const i = 0, len = order.length; i < len; ++i) {
       c = new Map(c);
       c.delete(order[i]);
     }
@@ -37,46 +37,46 @@ module.exports.benchmarks['Native Map'] = function(keys, order) {
 };
 
 module.exports.benchmarks['Hashtrie'] = function(keys, order) {
-    var h = api.hashtrieFrom(keys);
+    const h = api.hashtrieFrom(keys);
     return function() {
-        var c = h;
-        for (var i = 0, len = order.length; i < len; ++i)
+        const c = h;
+        for (const i = 0, len = order.length; i < len; ++i)
             c = ht.remove(keys[order[i]], c);
     };
 };
 
 module.exports.benchmarks['Hamt'] = function(keys, order) {
-    var h = api.hamtFrom(keys);
+    const h = api.hamtFrom(keys);
     return function() {
-        var c = h;
-        for (var i = 0, len = order.length; i < len; ++i)
+        const c = h;
+        for (const i = 0, len = order.length; i < len; ++i)
             c = hamt.remove(keys[order[i]], c);
     };
 };
 
 module.exports.benchmarks['Hamt+'] = function(keys, order) {
-    var h = api.hamtPlusFrom(keys);
+    const h = api.hamtPlusFrom(keys);
     return function() {
-        var c = h;
-        for (var i = 0, len = order.length; i < len; ++i)
+        const c = h;
+        for (const i = 0, len = order.length; i < len; ++i)
             c = hamt_plus.remove(keys[order[i]], c);
     };
 };
 
 module.exports.benchmarks['Mori'] = function(keys, order) {
-    var h = api.moriFrom(keys);
+    const h = api.moriFrom(keys);
     return function() {
-        var c = h;
-        for (var i = 0, len = order.length; i < len; ++i)
+        const c = h;
+        for (const i = 0, len = order.length; i < len; ++i)
            c = mori.dissoc(c, keys[order[i]]);
     };
 };
 
 module.exports.benchmarks['Immutable'] = function(keys, order) {
-    var h = api.immutableFrom(keys);
+    const h = api.immutableFrom(keys);
     return function() {
-        var c = h;
-        for (var i = 0, len = order.length; i < len; ++i)
+        const c = h;
+        for (const i = 0, len = order.length; i < len; ++i)
            c = c.delete(keys[order[i]]);
     };
 };

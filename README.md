@@ -1,13 +1,12 @@
 Javascript Immutable Map Benchmarks
 
-Benchmarks a number of  Javascript immutable map implementations:
+Benchmarks a number of Javascript immutable map implementations:
 
 * Javascript objects that achieve immutability though copying (using `Object.assign`).
 * ES6's `Map` that achieves immutability though copying.
 * [hashtrie][hashtrie] - 0.2.x
 * [HAMT][hamt] -  0.1.x
 * [HAMT+][hamt_plus] - 0.0.x
-* [persistent-hash-trie][persistent] - 0.4.x
 * [mori][mori] - 0.2.x
 * [immutable][immutable] - 2.0.x
 

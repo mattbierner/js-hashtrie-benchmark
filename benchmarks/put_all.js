@@ -1,9 +1,9 @@
 "use strict";
-var ht = require('hashtrie');
-var hamt = require('hamt');
-var hamt_plus = require('hamt_plus');
-var mori = require('mori');
-var immutable = require('immutable');
+const ht = require('hashtrie');
+const hamt = require('hamt');
+const hamt_plus = require('hamt_plus');
+const mori = require('mori');
+const immutable = require('immutable');
 
 module.benchmarks = {
     name: 'Put N',
@@ -12,62 +12,62 @@ module.benchmarks = {
     benchmarks: {}
 };
 
-module.exports.benchmarks['Native Object'] = function(keys) {
+module.exports.benchmarks['Native Object'] = keys => {
     return function() {
-        var h = {};
-        for (var i = 0, len = keys.length; i < len; ++i) {
+        const h = {};
+        for (const i = 0, len = keys.length; i < len; ++i) {
             h = Object.assign({}, h);
             h[keys[i]] = i;
         }
     };
 };
 
-module.exports.benchmarks['Native Map'] = function(keys) {
+module.exports.benchmarks['Native Map'] = keys => {
     return function() {
-        var h = new Map();
-        for (var i = 0, len = keys.length; i < len; ++i) {
+        const h = new Map();
+        for (const i = 0, len = keys.length; i < len; ++i) {
             h = new Map(h);
             h.set(keys[i], i);
         }
     };
 };
 
-module.exports.benchmarks['Hashtrie'] = function(keys) {
+module.exports.benchmarks['Hashtrie'] = keys => {
     return function() {
-        var h = ht.empty;
-        for (var i = 0, len = keys.length; i < len; ++i)
+        const h = ht.empty;
+        for (const i = 0, len = keys.length; i < len; ++i)
             h = ht.set(i, keys[i], h);
     };
 };
 
-module.exports.benchmarks['Hamt'] = function(keys) {
+module.exports.benchmarks['Hamt'] = keys => {
     return function() {
-        var h = hamt.empty;
-        for (var i = 0, len = keys.length; i < len; ++i)
+        const h = hamt.empty;
+        for (const i = 0, len = keys.length; i < len; ++i)
             h = hamt.set(keys[i], i, h);
     };
 };
 
-module.exports.benchmarks['Hamt+'] = function(keys) {
+module.exports.benchmarks['Hamt+'] = keys => {
     return function() {
-        var h = hamt_plus.make();
-        for (var i = 0, len = keys.length; i < len; ++i)
+        const h = hamt_plus.make();
+        for (const i = 0, len = keys.length; i < len; ++i)
             h = hamt_plus.set(keys[i], i, h);
     };
 };
 
-module.exports.benchmarks['Mori'] = function(keys) {
+module.exports.benchmarks['Mori'] = keys => {
     return function() {
-        var h = mori.hashMap();
-        for (var i = 0, len = keys.length; i < len; ++i)
+        const h = mori.hashMap();
+        for (const i = 0, len = keys.length; i < len; ++i)
             h = mori.assoc(h, keys[i], i);
     };
 };
 
-module.exports.benchmarks['Immutable'] = function(keys) {
+module.exports.benchmarks['Immutable'] = keys => {
     return function() {
-        var h = immutable.Map();
-        for (var i = 0, len = keys.length; i < len; ++i)
+        const h = immutable.Map();
+        for (const i = 0, len = keys.length; i < len; ++i)
             h = h.set(keys[i], i);
     };
 };

@@ -24,8 +24,7 @@
     "immutable": "3.7.x",
     "microtime": "^2.0.0",
     "mori": "0.3.x",
-    "pad": "1.0.x",
-    "persistent-hash-trie": "0.4.x"
+    "pad": "1.0.x"
   },
   "scripts": {
     "benchmark": "node run.js"

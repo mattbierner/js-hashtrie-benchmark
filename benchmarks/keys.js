@@ -1,11 +1,11 @@
 "use strict";
-var ht = require('hashtrie');
-var hamt = require('hamt');
-var hamt_plus = require('hamt_plus');
-var mori = require('mori');
-var immutable = require('immutable');
+const ht = require('hashtrie');
+const hamt = require('hamt');
+const hamt_plus = require('hamt_plus');
+const mori = require('mori');
+const immutable = require('immutable');
 
-var api = require('../shared');
+const api = require('../shared');
 
 module.benchmarks = {
     name: 'Keys',
@@ -14,29 +14,29 @@ module.benchmarks = {
     benchmarks: {}
 };
 
-module.exports.benchmarks['Native Object'] = function(keys) {
-    var h = api.nativeObjectFrom(keys);
+module.exports.benchmarks['Native Object'] = keys => {
+    const h = api.nativeObjectFrom(keys);
     return function() {
         Object.keys(h);
     };
 };
 
-module.exports.benchmarks['Native Map'] = function(keys) {
-    var h = api.nativeMapFrom(keys);
+module.exports.benchmarks['Native Map'] = keys => {
+    const h = api.nativeMapFrom(keys);
     return function() {
         Array.from(h.keys());
     };
 };
 
-module.exports.benchmarks['Hashtrie'] = function(keys) {
-    var h = api.hashtrieFrom(keys);
+module.exports.benchmarks['Hashtrie'] = keys => {
+    const h = api.hashtrieFrom(keys);
     return function() {
         ht.keys(h);
     };
 };
 
-module.exports.benchmarks['Hamt'] = function(keys) {
-    var h = api.hamtFrom(keys);
+module.exports.benchmarks['Hamt'] = keys => {
+    const h = api.hamtFrom(keys);
     return function() {
         Array.from(hamt.keys(h));
     };
@@ -46,36 +46,36 @@ const build = (p, _, k) => {
     p.push(k);
     return p;
 };
-module.exports.benchmarks['Hamt fold'] = function(keys) {
-    var h = api.hamtFrom(keys);
+module.exports.benchmarks['Hamt fold'] = keys => {
+    const h = api.hamtFrom(keys);
     return function() {
         hamt.fold(build, [], h);
     };
 };
 
-module.exports.benchmarks['Hamt+'] = function(keys) {
-    var h = api.hamtPlusFrom(keys);
+module.exports.benchmarks['Hamt+'] = keys => {
+    const h = api.hamtPlusFrom(keys);
     return function() {
         Array.from(hamt_plus.keys(h));
     };
 };
 
-module.exports.benchmarks['Hamt+ fold'] = function(keys) {
-    var h = api.hamtPlusFrom(keys);
+module.exports.benchmarks['Hamt+ fold'] = keys => {
+    const h = api.hamtPlusFrom(keys);
     return function() {
         hamt.fold(build, [], h);
     };
 };
 
-module.exports.benchmarks['Mori'] = function(keys) {
-    var h = api.moriFrom(keys);
+module.exports.benchmarks['Mori'] = keys => {
+    const h = api.moriFrom(keys);
     return function() {
         mori.intoArray(mori.keys(h));
     };
 };
 
-module.exports.benchmarks['Immutable'] = function(keys) {
-    var h = api.immutableFrom(keys);
+module.exports.benchmarks['Immutable'] = keys => {
+    const h = api.immutableFrom(keys);
     return function() {
         h.keySeq().toArray();
     };
