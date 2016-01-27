@@ -27,10 +27,10 @@ exports.hamtFrom = function(keys) {
 };
 
 exports.hamtPlusFrom = function(keys) {
-    return hamt_plus.mutate(function(h) {
-        for (var i = 0; i < keys.length; ++i)
-            hamt_plus.set(keys[i], i, h);
-    }, hamt.empty);
+    var h = hamt_plus.empty;
+    for (var i = 0; i < keys.length; ++i)
+        h = h.set(keys[i], i);
+    return h;
 };
 
 exports.hashtrieFrom = function(keys) {

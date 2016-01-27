@@ -19,7 +19,7 @@
   "dependencies": {
     "benchmark": "2.0.x",
     "hamt": "2.0.x",
-    "hamt_plus": "0.0.x",
+    "hamt_plus": "1.0.x",
     "hashtrie": "1.0.x",
     "immutable": "3.7.x",
     "microtime": "^2.0.0",

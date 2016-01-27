@@ -43,15 +43,16 @@ The following are benchmarked:
 
 ### Interesting Notes
 * HAMT, HAMT+, and Immutable are the three fasted implementations.
-* These three library also perform well as the map size gets very large. It only costs ~6x as much to put an element into a HAMT map with 100000 entries as it does to put one into a HAMT map with 10 entries. 
+* These three library also perform well as the map size gets very large. It only costs ~6x as much to put an element into a HAMT map with 100000 entries as it does to put one into a HAMT map with 10 entries.
 * The immutability through copying used for Object and Map is too slow to use for larger objects. Their memory usage is likely much higher as well.
 * Hashtrie's sparse array storage is a [major performance hit](http://jsperf.com/sparse-array-reduce-overhead)
 for folds as neither `reduce` or `splice` show good performance for sparse arrays.
 * Both Mori and Immutable are more complete data structure libraries. This should be considered when selecting an immutable map implementation.
-* Mori and Immutable both can check the size of a map in constant time.
-* HAMT's use of iterators for some operations results in some overhead in these artificial benchmarks. You can see this in the `keys` test where the `fold` based implementation of `keys` is faster then `Array.from(k.keys())`
+* Mori, Immutable, and Hamt+ can check the size of a map in constant time.
+* Hamt's use of iterators for some operations results in some overhead in these artificial benchmarks. You can see this in the `keys` test where the `fold` based implementation of `keys` is faster then `Array.from(k.keys())`
 * HAMT is the fastest choice for `fold` style, accumulation operations such as sum.
-* Native `Map` is fastest for transient operations, but `Immutable` is the best of the libraries when transient operations are used only some of the time.
+* Native `Map` is fastest for transient operations, but `Immutable` or `Hamt+` perform best of these libraries performance when a mix of transient and non-transient operations are used.
+* Hamt+ does have a small amount of overhead compared to regular Hamt, but performs much better when transient mutation can be used.
 
 ```
 hashtrie - 0.2.2
@@ -59,7 +60,7 @@ hamt - 1.1.1
 hamt_plus - 0.0.5
 mori - 0.3.2
 persistent-hash-trie - 0.4.2
-immutable – 3.7.6 
+immutable – 3.7.6
 
 
 Get nth
@@ -437,4 +438,3 @@ immutable(10000)              :          516.06 +/- 0.70% op/s
 
 [clojurescript]: https://github.com/clojure/clojurescript
 [khepri]: http://khepri-lang.com
-
