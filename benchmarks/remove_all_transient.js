@@ -38,7 +38,7 @@ module.exports.benchmarks['Native Map'] = (keys, order) => {
 module.exports.benchmarks['Hamt'] = (keys, order) => {
     const h = api.hamtFrom(keys);
     return function() {
-        const c = h;
+        let c = h;
         for (let i = 0, len = order.length; i < len; ++i)
             c = hamt.remove(keys[order[i]], c);
         return c;
@@ -48,7 +48,7 @@ module.exports.benchmarks['Hamt'] = (keys, order) => {
 module.exports.benchmarks['Hamt+'] = (keys, order) => {
     const h = api.hamtPlusFrom(keys);
     return function() {
-        const c = h.beginMutation();
+        let c = h.beginMutation();
         for (let i = 0, len = order.length; i < len; ++i)
             hamt_plus.remove(keys[order[i]], c);
         return c.endMutation();
@@ -58,7 +58,7 @@ module.exports.benchmarks['Hamt+'] = (keys, order) => {
 module.exports.benchmarks['Mori'] = (keys, order) => {
     const h = api.moriFrom(keys);
     return function() {
-        const c = mori.mutable.thaw(h);
+        let c = mori.mutable.thaw(h);
         for (let i = 0, len = order.length; i < len; ++i)
             c = mori.mutable.dissoc(c, keys[order[i]]);
         return mori.mutable.freeze(c);
@@ -68,7 +68,7 @@ module.exports.benchmarks['Mori'] = (keys, order) => {
 module.exports.benchmarks['Immutable'] = (keys, order) => {
     const h = api.immutableFrom(keys);
     return function() {
-        const c = h.asMutable();
+        let c = h.asMutable();
         for (let i = 0, len = order.length; i < len; ++i)
             c = c.delete(keys[order[i]]);
         return c.asImmutable();
