@@ -16,7 +16,7 @@ module.exports = {
 module.exports.benchmarks['Native Object'] = keys => {
     return function() {
         const h = {};
-        for (const i = 0, len = keys.length; i < len; ++i)
+        for (let i = 0, len = keys.length; i < len; ++i)
             h[keys[i]] = i;
         return h;
     };
@@ -25,7 +25,7 @@ module.exports.benchmarks['Native Object'] = keys => {
 module.exports.benchmarks['Native Map'] = keys => {
     return function() {
         const h = new Map();
-        for (const i = 0, len = keys.length; i < len; ++i)
+        for (let i = 0, len = keys.length; i < len; ++i)
             h.set(keys[i], i);
         return h;
     };
@@ -34,7 +34,7 @@ module.exports.benchmarks['Native Map'] = keys => {
 module.exports.benchmarks['Hamt'] =  keys => {
     return function() {
         const h = hamt.empty;
-        for (const i = 0, len = keys.length; i < len; ++i)
+        for (let i = 0, len = keys.length; i < len; ++i)
             h = hamt.set(i, keys[i], h);
         return h;
     };
@@ -43,7 +43,7 @@ module.exports.benchmarks['Hamt'] =  keys => {
 module.exports.benchmarks['Hamt+'] = keys => {
     return function() {
         const h = hamt_plus.make().beginMutation();
-        for (const i = 0, len = keys.length; i < len; ++i)
+        for (let i = 0, len = keys.length; i < len; ++i)
             hamt_plus.set(keys[i], i, h);
         return h.endMutation();
     };
@@ -52,7 +52,7 @@ module.exports.benchmarks['Hamt+'] = keys => {
 module.exports.benchmarks['Mori'] = keys => {
     return function() {
         const h = mori.mutable.thaw(mori.hashMap());
-        for (const i = 0, len = keys.length; i < len; ++i)
+        for (let i = 0, len = keys.length; i < len; ++i)
             mori.mutable.assoc(h, keys[i], i);
         return mori.mutable.freeze(h);
     };
@@ -61,7 +61,7 @@ module.exports.benchmarks['Mori'] = keys => {
 module.exports.benchmarks['Immutable'] = keys => {
     return function() {
         const h = immutable.Map().asMutable();
-        for (const i = 0, len = keys.length; i < len; ++i)
+        for (let i = 0, len = keys.length; i < len; ++i)
             h.set(keys[i], i);
         return h.asImmutable();
     };

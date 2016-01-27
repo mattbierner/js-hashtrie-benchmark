@@ -19,7 +19,7 @@ module.exports.benchmarks['Native Assign'] = function(keys, order) {
     const h = api.nativeObjectFrom(keys);
     return function() {
         const c = Object.assign({}, h);
-        for (const i = 0, len = order.length; i < len; ++i)
+        for (let i = 0, len = order.length; i < len; ++i)
             delete c[order[i]];
         return c;
     };
@@ -29,7 +29,7 @@ module.exports.benchmarks['Native Map'] = function(keys, order) {
     const h = api.nativeMapFrom(keys);
     return function() {
         const c = new Map(h);
-        for (const i = 0, len = order.length; i < len; ++i)
+        for (let i = 0, len = order.length; i < len; ++i)
             c.delete(order[i]);
         return c;
     };
@@ -39,7 +39,7 @@ module.exports.benchmarks['Hamt'] = function(keys, order) {
     const h = api.hamtFrom(keys);
     return function() {
         const c = h;
-        for (const i = 0, len = order.length; i < len; ++i)
+        for (let i = 0, len = order.length; i < len; ++i)
             c = hamt.remove(keys[order[i]], c);
         return c;
     };
@@ -49,7 +49,7 @@ module.exports.benchmarks['Hamt+'] = function(keys, order) {
     const h = api.hamtPlusFrom(keys);
     return function() {
         const c = h.beginMutation();
-        for (const i = 0, len = order.length; i < len; ++i)
+        for (let i = 0, len = order.length; i < len; ++i)
             hamt_plus.remove(keys[order[i]], c);
         return c.endMutation();
     };
@@ -59,7 +59,7 @@ module.exports.benchmarks['Mori'] = function(keys, order) {
     const h = api.moriFrom(keys);
     return function() {
         const c = mori.mutable.thaw(h);
-        for (const i = 0, len = order.length; i < len; ++i)
+        for (let i = 0, len = order.length; i < len; ++i)
             c = mori.mutable.dissoc(c, keys[order[i]]);
         return mori.mutable.freeze(c);
     };
@@ -69,7 +69,7 @@ module.exports.benchmarks['Immutable'] = function(keys, order) {
     const h = api.immutableFrom(keys);
     return function() {
         const c = h.asMutable();
-        for (const i = 0, len = order.length; i < len; ++i)
+        for (let i = 0, len = order.length; i < len; ++i)
             c = c.delete(keys[order[i]]);
         return c.asImmutable();
     };
