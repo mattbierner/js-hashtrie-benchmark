@@ -14,21 +14,21 @@ var words = require('./words').words;
 var api = require('./shared');
 
 var nativeObjectRemove = function(keys) {
-  var h = api.nativeObjectFrom(keys);
-  return function() {
-    var key = keys[Math.floor(Math.random() * keys.length)];
-    var c = Object.assign( {}, h );
-    delete c[key];
-  };
+    var h = api.nativeObjectFrom(keys);
+    return function() {
+        var key = keys[Math.floor(Math.random() * keys.length)];
+        var c = Object.assign({}, h);
+        delete c[key];
+    };
 };
 
 var nativeMapRemove = function(keys) {
-  var h = api.nativeMapFrom(keys);
-  return function() {
-    var key = keys[Math.floor(Math.random() * keys.length)];
-    var c = new Map(h);
-    c.delete(key);
-  };
+    var h = api.nativeMapFrom(keys);
+    return function() {
+        var key = keys[Math.floor(Math.random() * keys.length)];
+        var c = new Map(h);
+        c.delete(key);
+    };
 };
 
 var hashtrieRemove = function(keys) {
@@ -81,32 +81,32 @@ var immutableRemove = function(keys) {
 
 
 module.exports = function(sizes) {
-    return sizes.reduce(function(b,size) {
+    return sizes.reduce(function(b, size) {
         var keys = words(size, 10);
         return b
             .add('nativeObject(' + size + ')',
                 nativeObjectRemove(keys))
 
-            .add('nativeMap(' + size + ')',
-                nativeMapRemove(keys))
+        .add('nativeMap(' + size + ')',
+            nativeMapRemove(keys))
 
-            .add('hashtrie(' + size + ')',
-                hashtrieRemove(keys))
+        .add('hashtrie(' + size + ')',
+            hashtrieRemove(keys))
 
-            .add('hamt(' + size + ')',
-                hamtRemove(keys))
+        .add('hamt(' + size + ')',
+            hamtRemove(keys))
 
-             .add('hamt_plus(' + size + ')',
-                hamtPlusRemove(keys))
+        .add('hamt+(' + size + ')',
+            hamtPlusRemove(keys))
 
-            .add('persistent-hash-trie(' + size + ')',
-                pHashtrieRemove(keys))
+        .add('persistent-hash-trie(' + size + ')',
+            pHashtrieRemove(keys))
 
-            .add('mori hash_map(' + size + ')',
-                moriRemove(keys))
+        .add('mori hash_map(' + size + ')',
+            moriRemove(keys))
 
-            .add('immutable(' + size + ')',
-                immutableRemove(keys));;
+        .add('immutable(' + size + ')',
+            immutableRemove(keys));;
 
     }, new Benchmark.Suite('remove nth'));
 };

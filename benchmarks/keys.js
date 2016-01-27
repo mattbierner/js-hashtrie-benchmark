@@ -14,17 +14,17 @@ var words = require('./words').words;
 var api = require('./shared');
 
 var nativeObjectKeys = function(keys) {
-  var h = api.nativeObjectFrom(keys);
-  return function() {
-    Object.keys(h);
-  };
+    var h = api.nativeObjectFrom(keys);
+    return function() {
+        Object.keys(h);
+    };
 };
 
 var nativeMapKeys = function(keys) {
-  var h = api.nativeMapFrom(keys);
-  return function() {
-    Array.from(h.keys());
-  };
+    var h = api.nativeMapFrom(keys);
+    return function() {
+        Array.from(h.keys());
+    };
 };
 
 var hashtrieKeys = function(keys) {
@@ -41,11 +41,12 @@ var hamtKeys = function(keys) {
     };
 };
 
-
-var build = function(p, _, k) { p.push(k); return p; };
+var build = function(p, _, k) {
+    p.push(k);
+    return p;
+};
 var hamtKeysUsingFold = function(keys) {
     var h = api.hamtFrom(keys);
-    
     return function() {
         hamt.fold(build, [], h);
     };
@@ -54,7 +55,14 @@ var hamtKeysUsingFold = function(keys) {
 var hamtPlusKeys = function(keys) {
     var h = api.hamtPlusFrom(keys);
     return function() {
-        hamt_plus.keys(h);
+        Array.from(hamt_plus.keys(h));
+    };
+};
+
+var hamtPlusKeysUsingFold = function(keys) {
+    var h = api.hamtPlusFrom(keys);
+    return function() {
+        hamt.fold(build, [], h);
     };
 };
 
@@ -88,29 +96,32 @@ module.exports = function(sizes) {
             .add('nativeObject(' + size + ')',
                 nativeObjectKeys(keys))
 
-            .add('nativeMap(' + size + ')',
-                nativeMapKeys(keys))
+        .add('nativeMap(' + size + ')',
+            nativeMapKeys(keys))
 
-            .add('hashtrie(' + size + ')',
-                hashtrieKeys(keys))
+        .add('hashtrie(' + size + ')',
+            hashtrieKeys(keys))
 
-            .add('hamt(' + size + ')',
-                hamtKeys(keys))
-                
-            .add('hamt fold impl(' + size + ')',
-                hamtKeysUsingFold(keys))
-                
-            .add('hamt_plus(' + size + ')',
-                hamtPlusKeys(keys))
+        .add('hamt(' + size + ')',
+            hamtKeys(keys))
 
-            .add('persistent-hash-trie(' + size + ')',
-                pHashtrieKeys(keys))
+        .add('hamt fold(' + size + ')',
+            hamtKeysUsingFold(keys))
 
-            .add('mori hash_map(' + size + ')',
-                moriKeys(keys))
+        .add('hamt+(' + size + ')',
+            hamtPlusKeys(keys))
 
-            .add('immutable(' + size + ')',
-                immutableKeys(keys));
-    
+        .add('hamt+ fold(' + size + ')',
+            hamtPlusKeysUsingFold(keys))
+
+        .add('persistent-hash-trie(' + size + ')',
+            pHashtrieKeys(keys))
+
+        .add('mori hash_map(' + size + ')',
+            moriKeys(keys))
+
+        .add('immutable(' + size + ')',
+            immutableKeys(keys));
+
     }, new Benchmark.Suite('Keys'));
 };

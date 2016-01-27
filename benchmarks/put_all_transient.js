@@ -13,22 +13,22 @@ var immutable = require('immutable');
 
 var words = require('./words').words;
 
-var nativeObjectPutAll = function(keys){
-  return function() {
-    var h = {};
-    for(var i = 0, len = keys.length; i < len; ++i) {
-      h[keys[i]] = i;
-    }
-  };
+var nativeObjectPutAll = function(keys) {
+    return function() {
+        var h = {};
+        for (var i = 0, len = keys.length; i < len; ++i)
+            h[keys[i]] = i;
+        return h;
+    };
 };
 
 var nativeMapPutAll = function(keys) {
-  return function() {
-    var h = new Map();
-    for(var i = 0, len = keys.length; i < len; ++i) {
-      h.set(keys[i], i);
-    }
-  };
+    return function() {
+        var h = new Map();
+        for (var i = 0, len = keys.length; i < len; ++i)
+            h.set(keys[i], i);
+        return h;
+    };
 }
 
 var hamtPutAll = function(keys) {
@@ -36,18 +36,16 @@ var hamtPutAll = function(keys) {
         var h = hamt.empty;
         for (var i = 0, len = keys.length; i < len; ++i)
             h = hamt.set(i, keys[i], h);
+        return h;
     };
 };
 
 var hamtPlusPutAll = function(keys) {
-    var mutation = function(h) {
+    return function() {
+        var h = hamt_plus.make().beginMutation();
         for (var i = 0, len = keys.length; i < len; ++i)
             hamt_plus.set(keys[i], i, h);
-    };
-    return function() {
-        var h = hamt_plus.make();
-        hamt_plus.mutate(mutation, h);
-        return h;
+        return h.endMutation();
     };
 };
 
@@ -55,8 +53,8 @@ var moriPutAll = function(keys) {
     return function() {
         var h = mori.mutable.thaw(mori.hashMap());
         for (var i = 0, len = keys.length; i < len; ++i)
-            h = mori.mutable.assoc(h, keys[i], i);
-        h = mori.mutable.freeze(h);
+            mori.mutable.assoc(h, keys[i], i);
+        return mori.mutable.freeze(h);
     };
 };
 
@@ -64,33 +62,33 @@ var immutablePutAll = function(keys) {
     return function() {
         var h = immutable.Map().asMutable();
         for (var i = 0, len = keys.length; i < len; ++i)
-            h = h.set(keys[i], i);
-        h = h.asImmutable();
+            h.set(keys[i], i);
+        return h.asImmutable();
     };
 };
 
 
 module.exports = function(sizes) {
-    return sizes.reduce(function(b,size) {
+    return sizes.reduce(function(b, size) {
         var keys = words(size, 10);
         return b
             .add('nativeObject(' + size + ')',
                 nativeObjectPutAll(keys))
 
-            .add('nativeMap(' + size + ')',
-                nativeMapPutAll(keys))
+        .add('nativeMap(' + size + ')',
+            nativeMapPutAll(keys))
 
-            .add('hamt(' + size + ')',
-                hamtPutAll(keys))
+        .add('hamt(' + size + ')',
+            hamtPutAll(keys))
 
-            .add('hamt_plus(' + size + ')',
-                hamtPlusPutAll(keys))
+        .add('hamt+(' + size + ')',
+            hamtPlusPutAll(keys))
 
-            .add('mori hash_map(' + size + ')',
-                moriPutAll(keys))
+        .add('mori hash_map(' + size + ')',
+            moriPutAll(keys))
 
-            .add('immutable(' + size + ')',
-                immutablePutAll(keys));
+        .add('immutable(' + size + ')',
+            immutablePutAll(keys));
 
     }, new Benchmark.Suite('Put All (transient)'));
 };

@@ -14,29 +14,31 @@ var words = require('./words').words;
 var api = require('./shared');
 
 var nativeObjectSum = function(keys) {
-  var h = api.nativeObjectFrom(keys);
-  return function() {
-    var sum = 0;
-    for( var k in h ) {
-      if ( h.hasOwnProperty( k ) ) {
-        sum += h[k];
-      }
-    }
-  };
+    var h = api.nativeObjectFrom(keys);
+    return function() {
+        var sum = 0;
+        for (var k in h) {
+            if (h.hasOwnProperty(k)) {
+                sum += h[k];
+            }
+        }
+    };
 };
 
 var nativeMapSum = function(keys) {
-  var h = api.nativeMapFrom(keys);
-  return function() {
-    var sum = 0;
-    h.forEach( function( val, key ) {
-      sum += val;
-    } );
-  };
+    var h = api.nativeMapFrom(keys);
+    return function() {
+        var sum = 0;
+        h.forEach(function(val, key) {
+            sum += val;
+        });
+    };
 };
 
 var hashtrieSum = function(keys) {
-    var add = function(p, x) { return p + x; };
+    var add = function(p, x) {
+        return p + x;
+    };
 
     var h = api.hashtrieFrom(keys);
     return function() {
@@ -45,7 +47,9 @@ var hashtrieSum = function(keys) {
 };
 
 var hamtSum = function(keys) {
-    var add = function(p, x) { return p + x; };
+    var add = function(p, x) {
+        return p + x;
+    };
 
     var h = api.hamtFrom(keys);
     return function() {
@@ -54,7 +58,9 @@ var hamtSum = function(keys) {
 };
 
 var hamtPlusSum = function(keys) {
-    var add = function(p, c) { return p + c.value; };
+    var add = function(p, x) {
+        return p + x;
+    };
 
     var h = api.hamtPlusFrom(keys);
     return function() {
@@ -63,7 +69,9 @@ var hamtPlusSum = function(keys) {
 };
 
 var pHashtrieSum = function(keys) {
-    var add = function(p, c) { return p + c; };
+    var add = function(p, c) {
+        return p + c;
+    };
 
     var h = api.pHashtrieFrom(keys);
     return function() {
@@ -72,7 +80,9 @@ var pHashtrieSum = function(keys) {
 };
 
 var moriSum = function(keys) {
-    var add = function(p, _, c) { return p + c; };
+    var add = function(p, _, c) {
+        return p + c;
+    };
 
     var h = api.moriFrom(keys);
     return function() {
@@ -81,7 +91,9 @@ var moriSum = function(keys) {
 };
 
 var immutableSum = function(keys) {
-    var add = function(p, c) { return p + c; };
+    var add = function(p, c) {
+        return p + c;
+    };
 
     var h = api.immutableFrom(keys);
     return function() {
@@ -97,26 +109,26 @@ module.exports = function(sizes) {
             .add('nativeObject(' + size + ')',
                 nativeObjectSum(keys))
 
-            .add('nativeMap(' + size + ')',
-                nativeMapSum(keys))
+        .add('nativeMap(' + size + ')',
+            nativeMapSum(keys))
 
-            .add('hashtrie(' + size + ')',
-                hashtrieSum(keys))
+        .add('hashtrie(' + size + ')',
+            hashtrieSum(keys))
 
-            .add('hamt(' + size + ')',
-                hamtSum(keys))
+        .add('hamt(' + size + ')',
+            hamtSum(keys))
 
-            .add('hamt_plus(' + size + ')',
-                hamtPlusSum(keys))
+        .add('hamt+(' + size + ')',
+            hamtPlusSum(keys))
 
-            .add('persistent-hash-trie(' + size + ')',
-                pHashtrieSum(keys))
+        .add('persistent-hash-trie(' + size + ')',
+            pHashtrieSum(keys))
 
-            .add('mori hash_map(' + size + ')',
-                moriSum(keys))
+        .add('mori hash_map(' + size + ')',
+            moriSum(keys))
 
-            .add('immutable(' + size + ')',
-                immutableSum(keys));
+        .add('immutable(' + size + ')',
+            immutableSum(keys));
 
     }, new Benchmark.Suite('Sum'));
 };

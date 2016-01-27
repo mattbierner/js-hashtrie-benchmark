@@ -108,7 +108,7 @@ module.exports = function(sizes) {
             .add('hamt(' + size + ')',
                 hamtRemoveAll(keys, order))
 
-            .add('hamt_plus(' + size + ')',
+            .add('hamt+(' + size + ')',
                 hamtPlusRemoveAll(keys, order))
 
             .add('persistent-hash-trie(' + size + ')',
