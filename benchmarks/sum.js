@@ -17,11 +17,10 @@ module.exports = {
 module.exports.benchmarks['Native Object'] = keys => {
     const h = api.nativeObjectFrom(keys);
     return function() {
-        const sum = 0;
-        for (const k in h) {
-            if (h.hasOwnProperty(k)) {
+        let sum = 0;
+        for (let k in h) {
+            if (h.hasOwnProperty(k))
                 sum += h[k];
-            }
         }
     };
 };
@@ -29,7 +28,7 @@ module.exports.benchmarks['Native Object'] = keys => {
 module.exports.benchmarks['Native Map'] = keys => {
     const h = api.nativeMapFrom(keys);
     return function() {
-        const sum = 0;
+        let sum = 0;
         h.forEach(function(val, key) {
             sum += val;
         });

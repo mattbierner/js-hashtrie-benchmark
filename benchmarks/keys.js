@@ -63,7 +63,7 @@ module.exports.benchmarks['Hamt+'] = keys => {
 module.exports.benchmarks['Hamt+ fold'] = keys => {
     const h = api.hamtPlusFrom(keys);
     return function() {
-        hamt.fold(build, [], h);
+        hamt_plus.fold(build, [], h);
     };
 };
 
