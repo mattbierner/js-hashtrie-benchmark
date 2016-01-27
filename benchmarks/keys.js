@@ -7,7 +7,7 @@ const immutable = require('immutable');
 
 const api = require('../shared');
 
-module.benchmarks = {
+module.exports = {
     name: 'Keys',
     description: "Cost to keys as JS array from map of size `n`.",
     sizes: [10, 100, 1000, 10000],

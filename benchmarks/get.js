@@ -14,7 +14,7 @@ module.exports = {
     benchmarks: {},
 };
 
-module.exports.benchmarks['Native Object'] =keys => {
+module.exports.benchmarks['Native Object'] = keys => {
     const h = api.nativeObjectFrom(keys);
     return function() {
         const key = keys[Math.floor(Math.random() * keys.length)];
@@ -30,7 +30,7 @@ module.exports.benchmarks['Native Map'] = keys => {
     };
 };
 
-module.exports.benchmarks['Hashtrie'] =keys => {
+module.exports.benchmarks['Hashtrie'] = keys => {
     const h = api.hashtrieFrom(keys);
     return function() {
         const key = keys[Math.floor(Math.random() * keys.length)];
@@ -38,7 +38,7 @@ module.exports.benchmarks['Hashtrie'] =keys => {
     };
 };
 
-module.exports.benchmarks['Hamt'] =keys => {
+module.exports.benchmarks['Hamt'] = keys => {
     const h = api.hamtFrom(keys);
     return function() {
         const key = keys[Math.floor(Math.random() * keys.length)];
@@ -46,7 +46,7 @@ module.exports.benchmarks['Hamt'] =keys => {
     };
 };
 
-module.exports.benchmarks['Hamt+'] =keys => {
+module.exports.benchmarks['Hamt+'] = keys => {
     const h = api.hamtPlusFrom(keys);
     return function() {
         const key = keys[Math.floor(Math.random() * keys.length)];
@@ -54,7 +54,7 @@ module.exports.benchmarks['Hamt+'] =keys => {
     };
 };
 
-module.exports.benchmarks['Mori'] =keys => {
+module.exports.benchmarks['Mori'] = keys => {
     const h = api.moriFrom(keys);
     return function() {
         const key = keys[Math.floor(Math.random() * keys.length)];

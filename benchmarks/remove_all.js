@@ -15,25 +15,25 @@ module.exports = {
 };
 
 module.exports.benchmarks['Native Object'] = function(keys, order) {
-  const h = api.nativeObjectFrom(keys);
-  return function() {
-    const c = h;
-    for(const i = 0, len = order.length; i < len; ++i) {
-      c = Object.assign({}, c);
-      delete c[order[i]];
-    }
-  };
+    const h = api.nativeObjectFrom(keys);
+    return function() {
+        const c = h;
+        for (const i = 0, len = order.length; i < len; ++i) {
+            c = Object.assign({}, c);
+            delete c[order[i]];
+        }
+    };
 };
 
 module.exports.benchmarks['Native Map'] = function(keys, order) {
-  const h = api.nativeMapFrom(keys);
-  return function() {
-    const c = h;
-    for(const i = 0, len = order.length; i < len; ++i) {
-      c = new Map(c);
-      c.delete(order[i]);
-    }
-  };
+    const h = api.nativeMapFrom(keys);
+    return function() {
+        const c = h;
+        for (const i = 0, len = order.length; i < len; ++i) {
+            c = new Map(c);
+            c.delete(order[i]);
+        }
+    };
 };
 
 module.exports.benchmarks['Hashtrie'] = function(keys, order) {
@@ -68,7 +68,7 @@ module.exports.benchmarks['Mori'] = function(keys, order) {
     return function() {
         const c = h;
         for (const i = 0, len = order.length; i < len; ++i)
-           c = mori.dissoc(c, keys[order[i]]);
+            c = mori.dissoc(c, keys[order[i]]);
     };
 };
 
@@ -77,6 +77,6 @@ module.exports.benchmarks['Immutable'] = function(keys, order) {
     return function() {
         const c = h;
         for (const i = 0, len = order.length; i < len; ++i)
-           c = c.delete(keys[order[i]]);
+            c = c.delete(keys[order[i]]);
     };
 };

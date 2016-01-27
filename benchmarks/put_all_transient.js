@@ -5,12 +5,12 @@ const hamt_plus = require('hamt_plus');
 const mori = require('mori');
 const immutable = require('immutable');
 
-module.benchmarks = {
+module.exports = {
     name: 'Put N (transient)',
     description: "Cost to put `n` entries into the map.\n" +
         "Uses transiently mutable object interface if supported.",
     sizes: [10, 100, 1000, 10000],
-    benchmarks: {},
+    benchmarks: {}
 };
 
 module.exports.benchmarks['Native Object'] = keys => {

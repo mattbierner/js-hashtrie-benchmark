@@ -28,7 +28,7 @@ module.exports.benchmarks['Native Map'] = keys => {
     const h = api.nativeMapFrom(keys.slice(1));
     const key = keys[0];
     return function() {
-        c = new Map(h);
+        const c = new Map(h);
         c.set(key, 0);
     };
 };

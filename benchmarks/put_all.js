@@ -5,7 +5,7 @@ const hamt_plus = require('hamt_plus');
 const mori = require('mori');
 const immutable = require('immutable');
 
-module.benchmarks = {
+module.exports = {
     name: 'Put N',
     description: "Cost to put `n` entries into a map.",
     sizes: [10, 100, 1000, 10000],

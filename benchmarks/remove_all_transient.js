@@ -6,7 +6,7 @@ const immutable = require('immutable');
 
 const api = require('../shared');
 
-module.benchmarks = {
+module.exports = {
     name: 'Remove N (transient)',
     description:
         "Cost to removed all entries from a hashtrie of size `n`.\n" +

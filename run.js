@@ -1,7 +1,8 @@
 "use strict";
 const Benchmark = require('benchmark');
 const pad = require('pad');
-var words = require('./words').words;
+const words = require('./words').words;
+const range = require('./words').range;
 
 const log = function() {
     console.log(this.name);
@@ -16,9 +17,10 @@ const run = (path) => {
     const tests = require(path);
     const benchmark = tests.sizes.reduce((b, size) => {
         const keys = words(size, 10);
+        const order = range(0, size);
         return Object.keys(tests.benchmarks).reduce(
             (b, name) =>
-                b.add(name + '(' + size + ')', tests.benchmarks[name](keys)),
+                b.add(name + '(' + size + ')', tests.benchmarks[name](keys, order)),
             b);
     }, new Benchmark.Suite(tests.name));
 
