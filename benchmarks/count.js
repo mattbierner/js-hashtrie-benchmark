@@ -1,4 +1,4 @@
- "use strict";
+"use strict";
 const ht = require('hashtrie');
 const hamt = require('hamt');
 const hamt_plus = require('hamt_plus');

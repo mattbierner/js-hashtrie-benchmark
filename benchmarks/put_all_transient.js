@@ -1,4 +1,4 @@
- "use strict";
+"use strict";
 const ht = require('hashtrie');
 const hamt = require('hamt');
 const hamt_plus = require('hamt_plus');
@@ -31,7 +31,7 @@ module.exports.benchmarks['Native Map'] = keys => {
     };
 }
 
-module.exports.benchmarks['Hamt'] =  keys => {
+module.exports.benchmarks['Hamt'] = keys => {
     return function() {
         const h = hamt.empty;
         for (let i = 0, len = keys.length; i < len; ++i)
