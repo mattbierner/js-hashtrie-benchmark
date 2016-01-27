@@ -1,127 +1,82 @@
-/**
- * @fileOverview Cost to keys as JS array from map of size `n`.
- */
-var Benchmark = require('benchmark');
-
+"use strict";
 var ht = require('hashtrie');
 var hamt = require('hamt');
 var hamt_plus = require('hamt_plus');
-var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
 
-var words = require('./words').words;
-var api = require('./shared');
+var api = require('../shared');
 
-var nativeObjectKeys = function(keys) {
+module.benchmarks = {
+    name: 'Keys',
+    description: "Cost to keys as JS array from map of size `n`.",
+    sizes: [10, 100, 1000, 10000],
+    benchmarks: {}
+};
+
+module.exports.benchmarks['Native Object'] = function(keys) {
     var h = api.nativeObjectFrom(keys);
     return function() {
         Object.keys(h);
     };
 };
 
-var nativeMapKeys = function(keys) {
+module.exports.benchmarks['Native Map'] = function(keys) {
     var h = api.nativeMapFrom(keys);
     return function() {
         Array.from(h.keys());
     };
 };
 
-var hashtrieKeys = function(keys) {
+module.exports.benchmarks['Hashtrie'] = function(keys) {
     var h = api.hashtrieFrom(keys);
     return function() {
         ht.keys(h);
     };
 };
 
-var hamtKeys = function(keys) {
+module.exports.benchmarks['Hamt'] = function(keys) {
     var h = api.hamtFrom(keys);
     return function() {
         Array.from(hamt.keys(h));
     };
 };
 
-var build = function(p, _, k) {
+const build = (p, _, k) => {
     p.push(k);
     return p;
 };
-var hamtKeysUsingFold = function(keys) {
+module.exports.benchmarks['Hamt fold'] = function(keys) {
     var h = api.hamtFrom(keys);
     return function() {
         hamt.fold(build, [], h);
     };
 };
 
-var hamtPlusKeys = function(keys) {
+module.exports.benchmarks['Hamt+'] = function(keys) {
     var h = api.hamtPlusFrom(keys);
     return function() {
         Array.from(hamt_plus.keys(h));
     };
 };
 
-var hamtPlusKeysUsingFold = function(keys) {
+module.exports.benchmarks['Hamt+ fold'] = function(keys) {
     var h = api.hamtPlusFrom(keys);
     return function() {
         hamt.fold(build, [], h);
     };
 };
 
-var pHashtrieKeys = function(keys) {
-    var h = api.pHashtrieFrom(keys);
-    return function() {
-        p.keys(h);
-    };
-};
-
-var moriKeys = function(keys) {
+module.exports.benchmarks['Mori'] = function(keys) {
     var h = api.moriFrom(keys);
-    // I believe this is the closest translation
     return function() {
         mori.intoArray(mori.keys(h));
     };
 };
 
-var immutableKeys = function(keys) {
+module.exports.benchmarks['Immutable'] = function(keys) {
     var h = api.immutableFrom(keys);
     return function() {
         h.keySeq().toArray();
     };
-};
-
-
-module.exports = function(sizes) {
-    return sizes.reduce(function(b, size) {
-        var keys = words(size, 10);
-        return b
-            .add('nativeObject(' + size + ')',
-                nativeObjectKeys(keys))
-
-        .add('nativeMap(' + size + ')',
-            nativeMapKeys(keys))
-
-        .add('hashtrie(' + size + ')',
-            hashtrieKeys(keys))
-
-        .add('hamt(' + size + ')',
-            hamtKeys(keys))
-
-        .add('hamt fold(' + size + ')',
-            hamtKeysUsingFold(keys))
-
-        .add('hamt+(' + size + ')',
-            hamtPlusKeys(keys))
-
-        .add('hamt+ fold(' + size + ')',
-            hamtPlusKeysUsingFold(keys))
-
-        .add('persistent-hash-trie(' + size + ')',
-            pHashtrieKeys(keys))
-
-        .add('mori hash_map(' + size + ')',
-            moriKeys(keys))
-
-        .add('immutable(' + size + ')',
-            immutableKeys(keys));
-
-    }, new Benchmark.Suite('Keys'));
 };

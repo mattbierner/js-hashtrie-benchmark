@@ -1,8 +1,4 @@
-/**
- * @fileOverview Cost to sum values in map of size `n`.
- */
-var Benchmark = require('benchmark');
-
+"use strict";
 var ht = require('hashtrie');
 var hamt = require('hamt');
 var hamt_plus = require('hamt_plus');
@@ -10,10 +6,16 @@ var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
 
-var words = require('./words').words;
-var api = require('./shared');
+var api = require('../shared');
 
-var nativeObjectSum = function(keys) {
+module.exports = {
+    name: 'Sum',
+    description: "Cost to sum values in map of size `n`.",
+    sizes: [10, 100, 1000, 10000],
+    benchmarks: {}
+};
+
+module.exports.benchmarks['Native Object'] = function(keys) {
     var h = api.nativeObjectFrom(keys);
     return function() {
         var sum = 0;
@@ -25,7 +27,7 @@ var nativeObjectSum = function(keys) {
     };
 };
 
-var nativeMapSum = function(keys) {
+module.exports.benchmarks['Native Map'] = function(keys) {
     var h = api.nativeMapFrom(keys);
     return function() {
         var sum = 0;
@@ -35,7 +37,7 @@ var nativeMapSum = function(keys) {
     };
 };
 
-var hashtrieSum = function(keys) {
+module.exports.benchmarks['Hashtrie'] = function(keys) {
     var add = function(p, x) {
         return p + x;
     };
@@ -46,7 +48,7 @@ var hashtrieSum = function(keys) {
     };
 };
 
-var hamtSum = function(keys) {
+module.exports.benchmarks['Hamt'] = function(keys) {
     var add = function(p, x) {
         return p + x;
     };
@@ -57,7 +59,7 @@ var hamtSum = function(keys) {
     };
 };
 
-var hamtPlusSum = function(keys) {
+module.exports.benchmarks['Hamt+'] = function(keys) {
     var add = function(p, x) {
         return p + x;
     };
@@ -68,18 +70,7 @@ var hamtPlusSum = function(keys) {
     };
 };
 
-var pHashtrieSum = function(keys) {
-    var add = function(p, c) {
-        return p + c;
-    };
-
-    var h = api.pHashtrieFrom(keys);
-    return function() {
-        p.reduce(h, add, 0);
-    };
-};
-
-var moriSum = function(keys) {
+module.exports.benchmarks['Mori'] = function(keys) {
     var add = function(p, _, c) {
         return p + c;
     };
@@ -90,7 +81,7 @@ var moriSum = function(keys) {
     };
 };
 
-var immutableSum = function(keys) {
+module.exports.benchmarks['Immutable'] = function(keys) {
     var add = function(p, c) {
         return p + c;
     };
@@ -99,36 +90,4 @@ var immutableSum = function(keys) {
     return function() {
         h.reduce(add, 0);
     };
-};
-
-
-module.exports = function(sizes) {
-    return sizes.reduce(function(b, size) {
-        var keys = words(size, 10);
-        return b
-            .add('nativeObject(' + size + ')',
-                nativeObjectSum(keys))
-
-        .add('nativeMap(' + size + ')',
-            nativeMapSum(keys))
-
-        .add('hashtrie(' + size + ')',
-            hashtrieSum(keys))
-
-        .add('hamt(' + size + ')',
-            hamtSum(keys))
-
-        .add('hamt+(' + size + ')',
-            hamtPlusSum(keys))
-
-        .add('persistent-hash-trie(' + size + ')',
-            pHashtrieSum(keys))
-
-        .add('mori hash_map(' + size + ')',
-            moriSum(keys))
-
-        .add('immutable(' + size + ')',
-            immutableSum(keys));
-
-    }, new Benchmark.Suite('Sum'));
 };

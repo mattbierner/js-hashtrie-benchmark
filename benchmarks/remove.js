@@ -1,19 +1,20 @@
-/**
- * @fileOverview Cost to remove entry from hash of size `n`.
- */
-var Benchmark = require('benchmark');
-
+"use strict";
 var ht = require('hashtrie');
 var hamt = require('hamt');
 var hamt_plus = require('hamt_plus');
-var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
 
-var words = require('./words').words;
-var api = require('./shared');
+var api = require('../shared');
 
-var nativeObjectRemove = function(keys) {
+module.exports = {
+    name: 'Remove Nth',
+    description: "Cost to remove entry from map of size `n`.",
+    sizes: [10, 100, 1000, 10000, 100000],
+    benchmarks: {}
+};
+
+module.exports.benchmarks['Native Object'] = function(keys) {
     var h = api.nativeObjectFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
@@ -22,7 +23,7 @@ var nativeObjectRemove = function(keys) {
     };
 };
 
-var nativeMapRemove = function(keys) {
+module.exports.benchmarks['Native Map'] = function(keys) {
     var h = api.nativeMapFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
@@ -31,7 +32,7 @@ var nativeMapRemove = function(keys) {
     };
 };
 
-var hashtrieRemove = function(keys) {
+module.exports.benchmarks['Hashtrie'] = function(keys) {
     var h = api.hashtrieFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
@@ -39,7 +40,7 @@ var hashtrieRemove = function(keys) {
     };
 };
 
-var hamtRemove = function(keys) {
+module.exports.benchmarks['Hamt'] = function(keys) {
     var h = api.hamtFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
@@ -47,7 +48,7 @@ var hamtRemove = function(keys) {
     };
 };
 
-var hamtPlusRemove = function(keys) {
+module.exports.benchmarks['Hamt+'] = function(keys) {
     var h = api.hamtPlusFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
@@ -55,15 +56,7 @@ var hamtPlusRemove = function(keys) {
     };
 };
 
-var pHashtrieRemove = function(keys) {
-    var h = api.pHashtrieFrom(keys);
-    return function() {
-        var key = keys[Math.floor(Math.random() * keys.length)];
-        p.dissoc(h, key);
-    };
-};
-
-var moriRemove = function(keys) {
+module.exports.benchmarks['Mori'] = function(keys) {
     var h = api.moriFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
@@ -71,42 +64,10 @@ var moriRemove = function(keys) {
     };
 };
 
-var immutableRemove = function(keys) {
+module.exports.benchmarks['Immutable'] = function(keys) {
     var h = api.immutableFrom(keys);
     return function() {
         var key = keys[Math.floor(Math.random() * keys.length)];
         h.delete(key);
     };
-};
-
-
-module.exports = function(sizes) {
-    return sizes.reduce(function(b, size) {
-        var keys = words(size, 10);
-        return b
-            .add('nativeObject(' + size + ')',
-                nativeObjectRemove(keys))
-
-        .add('nativeMap(' + size + ')',
-            nativeMapRemove(keys))
-
-        .add('hashtrie(' + size + ')',
-            hashtrieRemove(keys))
-
-        .add('hamt(' + size + ')',
-            hamtRemove(keys))
-
-        .add('hamt+(' + size + ')',
-            hamtPlusRemove(keys))
-
-        .add('persistent-hash-trie(' + size + ')',
-            pHashtrieRemove(keys))
-
-        .add('mori hash_map(' + size + ')',
-            moriRemove(keys))
-
-        .add('immutable(' + size + ')',
-            immutableRemove(keys));;
-
-    }, new Benchmark.Suite('remove nth'));
 };

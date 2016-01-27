@@ -1,19 +1,19 @@
-/**
- * @fileOverview Cost to put `n` entries into the hash.
- *
- * Uses transiently mutable object interface if possible
- */
-var Benchmark = require('benchmark');
-
+ "use strict";
 var ht = require('hashtrie');
 var hamt = require('hamt');
 var hamt_plus = require('hamt_plus');
 var mori = require('mori');
 var immutable = require('immutable');
 
-var words = require('./words').words;
+module.benchmarks = {
+    name: 'Put N (transient)',
+    description: "Cost to put `n` entries into the map.\n" +
+        "Uses transiently mutable object interface if supported.",
+    sizes: [10, 100, 1000, 10000],
+    benchmarks: {},
+};
 
-var nativeObjectPutAll = function(keys) {
+module.exports.benchmarks['Native Object'] = function(keys) {
     return function() {
         var h = {};
         for (var i = 0, len = keys.length; i < len; ++i)
@@ -22,7 +22,7 @@ var nativeObjectPutAll = function(keys) {
     };
 };
 
-var nativeMapPutAll = function(keys) {
+module.exports.benchmarks['Native Map'] = function(keys) {
     return function() {
         var h = new Map();
         for (var i = 0, len = keys.length; i < len; ++i)
@@ -31,7 +31,7 @@ var nativeMapPutAll = function(keys) {
     };
 }
 
-var hamtPutAll = function(keys) {
+module.exports.benchmarks['Hamt'] =  function(keys) {
     return function() {
         var h = hamt.empty;
         for (var i = 0, len = keys.length; i < len; ++i)
@@ -40,7 +40,7 @@ var hamtPutAll = function(keys) {
     };
 };
 
-var hamtPlusPutAll = function(keys) {
+module.exports.benchmarks['Hamt+'] = function(keys) {
     return function() {
         var h = hamt_plus.make().beginMutation();
         for (var i = 0, len = keys.length; i < len; ++i)
@@ -49,7 +49,7 @@ var hamtPlusPutAll = function(keys) {
     };
 };
 
-var moriPutAll = function(keys) {
+module.exports.benchmarks['Mori'] = function(keys) {
     return function() {
         var h = mori.mutable.thaw(mori.hashMap());
         for (var i = 0, len = keys.length; i < len; ++i)
@@ -58,37 +58,11 @@ var moriPutAll = function(keys) {
     };
 };
 
-var immutablePutAll = function(keys) {
+module.exports.benchmarks['Immutable'] = function(keys) {
     return function() {
         var h = immutable.Map().asMutable();
         for (var i = 0, len = keys.length; i < len; ++i)
             h.set(keys[i], i);
         return h.asImmutable();
     };
-};
-
-
-module.exports = function(sizes) {
-    return sizes.reduce(function(b, size) {
-        var keys = words(size, 10);
-        return b
-            .add('nativeObject(' + size + ')',
-                nativeObjectPutAll(keys))
-
-        .add('nativeMap(' + size + ')',
-            nativeMapPutAll(keys))
-
-        .add('hamt(' + size + ')',
-            hamtPutAll(keys))
-
-        .add('hamt+(' + size + ')',
-            hamtPlusPutAll(keys))
-
-        .add('mori hash_map(' + size + ')',
-            moriPutAll(keys))
-
-        .add('immutable(' + size + ')',
-            immutablePutAll(keys));
-
-    }, new Benchmark.Suite('Put All (transient)'));
 };

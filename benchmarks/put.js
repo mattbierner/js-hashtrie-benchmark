@@ -1,19 +1,20 @@
-/**
- * @fileOverview Cost to put the `nth` entry into a hash of size `n - 1`.
- */
-var Benchmark = require('benchmark');
-
+ "use strict";
 var ht = require('hashtrie');
 var hamt = require('hamt');
 var hamt_plus = require('hamt_plus');
-var p = require('persistent-hash-trie');
 var mori = require('mori');
 var immutable = require('immutable');
 
-var words = require('./words').words;
-var api = require('./shared');
+var api = require('../shared');
 
-var nativeObjectPut = function(keys) {
+module.exports = {
+    name: 'Put Nth',
+    description: "Cost to put the `nth` entry into a map of size `n - 1`.",
+    sizes: [10, 100, 1000, 10000, 100000],
+    benchmarks: {}
+};
+
+module.exports.benchmarks['Native Object'] = function(keys) {
     var h = api.nativeObjectFrom(keys.slice(1));
     var key = keys[0];
     return function() {
@@ -23,7 +24,7 @@ var nativeObjectPut = function(keys) {
     };
 };
 
-var nativeMapPut = function(keys) {
+module.exports.benchmarks['Native Map'] = function(keys) {
     var h = api.nativeMapFrom(keys.slice(1));
     var key = keys[0];
     return function() {
@@ -32,7 +33,7 @@ var nativeMapPut = function(keys) {
     };
 };
 
-var hashtriePut = function(keys) {
+module.exports.benchmarks['Hashtrie'] = function(keys) {
     var h = api.hashtrieFrom(keys.slice(1));
     var key = keys[0];
     return function() {
@@ -40,7 +41,7 @@ var hashtriePut = function(keys) {
     };
 };
 
-var hamtPut = function(keys) {
+module.exports.benchmarks['Hamt'] = function(keys) {
     var h = api.hamtFrom(keys.slice(1));
     var key = keys[0];
     return function() {
@@ -48,7 +49,7 @@ var hamtPut = function(keys) {
     };
 };
 
-var hamtPlusPut = function(keys) {
+module.exports.benchmarks['Hamt+'] =  function(keys) {
     var h = api.hamtPlusFrom(keys.slice(1));
     var key = keys[0];
     return function() {
@@ -56,15 +57,7 @@ var hamtPlusPut = function(keys) {
     };
 };
 
-var pHashtriePut = function(keys) {
-    var h = api.pHashtrieFrom(keys.slice(1));
-    var key = keys[0];
-    return function() {
-        p.assoc(h, key, 0);
-    };
-};
-
-var moriPut = function(keys) {
+module.exports.benchmarks['Mori'] = function(keys) {
     var h = api.moriFrom(keys.slice(1));
     var key = keys[0];
     return function() {
@@ -72,42 +65,10 @@ var moriPut = function(keys) {
     };
 };
 
-var immutablePut = function(keys) {
+module.exports.benchmarks['Immutable'] = function(keys) {
     var h = api.immutableFrom(keys.slice(1));
     var key = keys[0];
     return function() {
         h.set(key, 0);
     };
-};
-
-
-module.exports = function(sizes) {
-    return sizes.reduce(function(b, size) {
-        var keys = words(size, 10);
-        return b
-            .add('nativeObject(' + size + ')',
-                nativeObjectPut(keys))
-
-        .add('nativeMap(' + size + ')',
-            nativeMapPut(keys))
-
-        .add('hashtrie(' + size + ')',
-            hashtriePut(keys))
-
-        .add('hamt(' + size + ')',
-            hamtPut(keys))
-
-        .add('hamt+(' + size + ')',
-            hamtPlusPut(keys))
-
-        .add('persistent-hash-trie(' + size + ')',
-            pHashtriePut(keys))
-
-        .add('mori hash_map(' + size + ')',
-            moriPut(keys))
-
-        .add('immutable(' + size + ')',
-            immutablePut(keys));
-
-    }, new Benchmark.Suite('put nth'));
 };

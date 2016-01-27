@@ -1,20 +1,21 @@
-/**
- * @fileOverview Cost to removed all entries from a hashtrie of size `n`.
- *
- * Uses transient mutation if supported.
- */
-var Benchmark = require('benchmark');
-
+"use strict";
 var hamt = require('hamt');
 var hamt_plus = require('hamt_plus');
 var mori = require('mori');
 var immutable = require('immutable');
 
-var words = require('./words').words;
-var range = require('./words').range;
-var api = require('./shared');
+var api = require('../shared');
 
-var nativeObjectRemoveAll = function(keys, order) {
+module.benchmarks = {
+    name: 'Remove N (transient)',
+    description:
+        "Cost to removed all entries from a hashtrie of size `n`.\n" +
+        "Uses transient mutation if supported.",
+    sizes: [10, 100, 1000, 10000],
+    benchmarks: {}
+};
+
+module.exports.benchmarks['Native Assign'] = function(keys, order) {
     var h = api.nativeObjectFrom(keys);
     return function() {
         var c = Object.assign({}, h);
@@ -24,7 +25,7 @@ var nativeObjectRemoveAll = function(keys, order) {
     };
 };
 
-var nativeMapRemoveAll = function(keys, order) {
+module.exports.benchmarks['Native Map'] = function(keys, order) {
     var h = api.nativeMapFrom(keys);
     return function() {
         var c = new Map(h);
@@ -34,7 +35,7 @@ var nativeMapRemoveAll = function(keys, order) {
     };
 };
 
-var hamtRemoveAll = function(keys, order) {
+module.exports.benchmarks['Hamt'] = function(keys, order) {
     var h = api.hamtFrom(keys);
     return function() {
         var c = h;
@@ -44,7 +45,7 @@ var hamtRemoveAll = function(keys, order) {
     };
 };
 
-var hamtPlusRemoveAll = function(keys, order) {
+module.exports.benchmarks['Hamt+'] = function(keys, order) {
     var h = api.hamtPlusFrom(keys);
     return function() {
         var c = h.beginMutation();
@@ -54,7 +55,7 @@ var hamtPlusRemoveAll = function(keys, order) {
     };
 };
 
-var moriRemoveAll = function(keys, order) {
+module.exports.benchmarks['Mori'] = function(keys, order) {
     var h = api.moriFrom(keys);
     return function() {
         var c = mori.mutable.thaw(h);
@@ -64,7 +65,7 @@ var moriRemoveAll = function(keys, order) {
     };
 };
 
-var immutableRemoveAll = function(keys, order) {
+module.exports.benchmarks['Immutable'] = function(keys, order) {
     var h = api.immutableFrom(keys);
     return function() {
         var c = h.asMutable();
@@ -72,31 +73,4 @@ var immutableRemoveAll = function(keys, order) {
             c = c.delete(keys[order[i]]);
         return c.asImmutable();
     };
-};
-
-
-module.exports = function(sizes) {
-    return sizes.reduce(function(b, size) {
-        var keys = words(size, 10),
-            order = range(0, size);
-        return b
-            .add('nativeObject(' + size + ')',
-                nativeObjectRemoveAll(keys, order))
-
-        .add('nativeMap(' + size + ')',
-            nativeMapRemoveAll(keys, order))
-
-        .add('hamt(' + size + ')',
-            hamtRemoveAll(keys, order))
-
-        .add('hamt+(' + size + ')',
-            hamtPlusRemoveAll(keys, order))
-
-        .add('mori hash_map(' + size + ')',
-            moriRemoveAll(keys, order))
-
-        .add('immutable(' + size + ')',
-            immutableRemoveAll(keys, order));
-
-    }, new Benchmark.Suite('Remove All (transient)'));
 };
