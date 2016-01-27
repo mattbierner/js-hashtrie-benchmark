@@ -14,10 +14,10 @@ module.exports = {
     benchmarks: {}
 };
 
-module.exports.benchmarks['Native Object'] = function(keys, order) {
+module.exports.benchmarks['Native Object'] = (keys, order) => {
     const h = api.nativeObjectFrom(keys);
     return function() {
-        const c = h;
+        let c = h;
         for (let i = 0, len = order.length; i < len; ++i) {
             c = Object.assign({}, c);
             delete c[order[i]];
@@ -25,10 +25,10 @@ module.exports.benchmarks['Native Object'] = function(keys, order) {
     };
 };
 
-module.exports.benchmarks['Native Map'] = function(keys, order) {
+module.exports.benchmarks['Native Map'] = (keys, order) => {
     const h = api.nativeMapFrom(keys);
     return function() {
-        const c = h;
+        let c = h;
         for (let i = 0, len = order.length; i < len; ++i) {
             c = new Map(c);
             c.delete(order[i]);
@@ -36,46 +36,46 @@ module.exports.benchmarks['Native Map'] = function(keys, order) {
     };
 };
 
-module.exports.benchmarks['Hashtrie'] = function(keys, order) {
+module.exports.benchmarks['Hashtrie'] = (keys, order) => {
     const h = api.hashtrieFrom(keys);
     return function() {
-        const c = h;
+        let c = h;
         for (let i = 0, len = order.length; i < len; ++i)
             c = ht.remove(keys[order[i]], c);
     };
 };
 
-module.exports.benchmarks['Hamt'] = function(keys, order) {
+module.exports.benchmarks['Hamt'] = (keys, order) => {
     const h = api.hamtFrom(keys);
     return function() {
-        const c = h;
+        let c = h;
         for (let i = 0, len = order.length; i < len; ++i)
             c = hamt.remove(keys[order[i]], c);
     };
 };
 
-module.exports.benchmarks['Hamt+'] = function(keys, order) {
+module.exports.benchmarks['Hamt+'] = (keys, order) => {
     const h = api.hamtPlusFrom(keys);
     return function() {
-        const c = h;
+        let c = h;
         for (let i = 0, len = order.length; i < len; ++i)
             c = hamt_plus.remove(keys[order[i]], c);
     };
 };
 
-module.exports.benchmarks['Mori'] = function(keys, order) {
+module.exports.benchmarks['Mori'] = (keys, order) => {
     const h = api.moriFrom(keys);
     return function() {
-        const c = h;
+        let c = h;
         for (let i = 0, len = order.length; i < len; ++i)
             c = mori.dissoc(c, keys[order[i]]);
     };
 };
 
-module.exports.benchmarks['Immutable'] = function(keys, order) {
+module.exports.benchmarks['Immutable'] = (keys, order) => {
     const h = api.immutableFrom(keys);
     return function() {
-        const c = h;
+        let c = h;
         for (let i = 0, len = order.length; i < len; ++i)
             c = c.delete(keys[order[i]]);
     };

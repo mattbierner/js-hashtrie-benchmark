@@ -15,7 +15,7 @@ module.exports = {
     benchmarks: {}
 };
 
-module.exports.benchmarks['Native Assign'] = function(keys, order) {
+module.exports.benchmarks['Native Assign'] = (keys, order) => {
     const h = api.nativeObjectFrom(keys);
     return function() {
         const c = Object.assign({}, h);
@@ -25,7 +25,7 @@ module.exports.benchmarks['Native Assign'] = function(keys, order) {
     };
 };
 
-module.exports.benchmarks['Native Map'] = function(keys, order) {
+module.exports.benchmarks['Native Map'] = (keys, order) => {
     const h = api.nativeMapFrom(keys);
     return function() {
         const c = new Map(h);
@@ -35,7 +35,7 @@ module.exports.benchmarks['Native Map'] = function(keys, order) {
     };
 };
 
-module.exports.benchmarks['Hamt'] = function(keys, order) {
+module.exports.benchmarks['Hamt'] = (keys, order) => {
     const h = api.hamtFrom(keys);
     return function() {
         const c = h;
@@ -45,7 +45,7 @@ module.exports.benchmarks['Hamt'] = function(keys, order) {
     };
 };
 
-module.exports.benchmarks['Hamt+'] = function(keys, order) {
+module.exports.benchmarks['Hamt+'] = (keys, order) => {
     const h = api.hamtPlusFrom(keys);
     return function() {
         const c = h.beginMutation();
@@ -55,7 +55,7 @@ module.exports.benchmarks['Hamt+'] = function(keys, order) {
     };
 };
 
-module.exports.benchmarks['Mori'] = function(keys, order) {
+module.exports.benchmarks['Mori'] = (keys, order) => {
     const h = api.moriFrom(keys);
     return function() {
         const c = mori.mutable.thaw(h);
@@ -65,7 +65,7 @@ module.exports.benchmarks['Mori'] = function(keys, order) {
     };
 };
 
-module.exports.benchmarks['Immutable'] = function(keys, order) {
+module.exports.benchmarks['Immutable'] = (keys, order) => {
     const h = api.immutableFrom(keys);
     return function() {
         const c = h.asMutable();
