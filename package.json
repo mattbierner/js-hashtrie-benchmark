@@ -17,13 +17,13 @@
         "url": "https://github.com/mattbierner/js-hashtrie-benchmark.git"
     },
     "dependencies": {
-        "benchmark": "2.0.x",
-        "hamt": "2.1.x",
-        "hamt_plus": "1.0.x",
-        "hashtrie": "1.0.x",
-        "immutable": "3.7.x",
+        "benchmark": "^2.0.0",
+        "hamt": "2.2.1",
+        "hamt_plus": "1.0.2",
+        "hashtrie": "1.0.0",
+        "immutable": "3.8.1",
         "microtime": "^2.0.0",
-        "mori": "0.3.x",
+        "mori": "0.3.2",
         "pad": "1.0.x"
     },
     "scripts": {
